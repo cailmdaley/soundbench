@@ -5,19 +5,19 @@ Each instrument is a physical model in code (strings, bores, membranes, vocal tr
 Play it from Python notes, a MIDI file or the command line.
 The same library carries the ears an agent uses in place of listening: spectrograms, loudness, pitch and timbre measurements, and tools that fit an instrument's parameters to recordings.
 
-These instruments play every modelled part on the album *Era*; [the instrument table](docs/instruments.md) says which settings it uses and what each instrument's known flaws are.
+[The instrument table](docs/instruments.md) lists each instrument, its settings and its known flaws.
 
-```text
-notes + articulations / MIDI → physical instrument → audio
-                                                      ↓
-                          spectra · loudness · pitch · recording fits
+```mermaid
+flowchart LR
+    N["notes or MIDI"] --> I["physical instrument"] --> A["audio"]
+    A --> E["ears: spectrum, loudness, pitch, timbre"]
+    R["a recording"] --> E
+    E -- fit --> P["preset"] --> I
 ```
 
 ## Make sound
 
-Install [uv](https://docs.astral.sh/uv/) and [FFmpeg](https://ffmpeg.org/).
-On macOS, `brew install uv ffmpeg` supplies both; on Linux, install FFmpeg with your package manager and uv with its documented installer.
-No soundfonts, model weights, notation software or reference recordings are needed for the quickstart.
+Requires [uv](https://docs.astral.sh/uv/) and [FFmpeg](https://ffmpeg.org/) (`brew install uv ffmpeg`).
 
 ```sh
 git clone https://github.com/cailmdaley/soundbench.git
@@ -62,7 +62,6 @@ The library ships a default for each instrument, and the fitting tools let you r
 Reference audio is an explicit local input, never bundled or downloaded by a render.
 
 [AGENTS.md](AGENTS.md) covers playing, developing and measuring instruments.
-The library contains no album, original song collection, private listening room or recordings.
 
 ## Tests
 
