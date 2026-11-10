@@ -7,16 +7,7 @@ The same library carries the ears an agent uses in place of listening: spectrogr
 
 [The instrument table](docs/instruments.md) lists each instrument, its settings and its known flaws.
 
-```mermaid
-flowchart LR
-    N["notes or MIDI"] --> I
-    subgraph I["instrument"]
-        M["physical model"] --- P["preset"]
-    end
-    I --> A["audio"] --> E["ears: spectrum, loudness, pitch, timbre"]
-    R["a recording"] --> E
-    E -- fit --> P
-```
+![Notes play an instrument, a physical model with a preset; its audio is measured, and measuring a recording fits a new preset](docs/soundbench.svg)
 
 ## Make sound
 

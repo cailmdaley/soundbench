@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 430" role="img" aria-label="Notes play an instrument, which is a physical model with a preset; the audio is measured, and measuring a recording fits a new preset">
+  <!-- How Soundbench works. Drawn by Claude (Fable 5.2). -->
+  <defs>
+    <filter id="hand" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="3"/>
+    </filter>
+    <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(38)">
+      <line x1="0" y1="0" x2="0" y2="6" stroke="#2b2620" stroke-width="0.7" opacity="0.35"/>
+    </pattern>
+    <marker id="tip" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M2 2 L10 6 L2 10" fill="none" stroke="#2b2620" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="tipr" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M2 2 L10 6 L2 10" fill="none" stroke="#c9553f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <style>
+      .ink { fill: none; stroke: #2b2620; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+      .thin { fill: none; stroke: #2b2620; stroke-width: 1.2; stroke-linecap: round; }
+      .wood { fill: #e6cfa6; stroke: #2b2620; stroke-width: 2.2; stroke-linejoin: round; }
+      .dark { fill: #b98d5a; stroke: #2b2620; stroke-width: 2.2; stroke-linejoin: round; }
+      .skin { fill: #f6efdf; stroke: #2b2620; stroke-width: 2.2; stroke-linejoin: round; }
+      .red  { fill: #c9553f; stroke: #2b2620; stroke-width: 2.2; stroke-linejoin: round; }
+      .shade { fill: url(#hatch); stroke: none; }
+      .go { fill: none; stroke: #2b2620; stroke-width: 2; stroke-linecap: round; marker-end: url(#tip); }
+      .fit { fill: none; stroke: #c9553f; stroke-width: 2.2; stroke-linecap: round; stroke-dasharray: 7 6; marker-end: url(#tipr); }
+      text { font-family: Georgia, 'Iowan Old Style', serif; font-size: 17px; fill: #2b2620; text-anchor: middle; }
+      .small { font-size: 14px; font-style: italic; }
+      .redt { fill: #c9553f; font-style: italic; }
+    </style>
+  </defs>
+  <rect x="4" y="4" width="992" height="422" rx="18" fill="#fbf6ea" stroke="#e6dcc6"/>
+
+  <g filter="url(#hand)">
+    <!-- a page of notes -->
+    <path class="skin" d="M40 150 L160 144 L166 290 L46 296 Z"/>
+    <path class="thin" d="M56 190 L150 186 M56 200 L150 196 M56 210 L150 206 M56 220 L150 216 M56 230 L150 226"/>
+    <ellipse cx="74" cy="219" rx="6.5" ry="5" fill="#2b2620" transform="rotate(-20 74 219)"/>
+    <path class="ink" d="M80 217 L80 186"/>
+    <ellipse cx="102" cy="208" rx="6.5" ry="5" fill="#2b2620" transform="rotate(-20 102 208)"/>
+    <path class="ink" d="M108 206 L108 175"/>
+    <ellipse cx="130" cy="197" rx="6.5" ry="5" fill="#2b2620" transform="rotate(-20 130 197)"/>
+    <path class="ink" d="M136 195 L136 164 M80 186 L136 164"/>
+    <path class="thin" d="M60 256 L120 253 M60 268 L142 264"/>
+
+    <path class="go" d="M182 220 L246 220"/>
+
+    <!-- the instrument: a banjo -->
+    <g transform="translate(86 -6)">
+      <path class="wood" d="M262 232 L340 92 L352 98 L276 240 Z"/>
+      <path class="wood" d="M340 92 L346 62 L366 70 L352 98 Z"/>
+      <path class="ink" d="M342 76 L332 72 M345 66 L336 60 M364 80 L374 84 M362 90 L371 95"/>
+      <path class="ink" d="M300 164 L290 160"/>
+      <circle class="dark" cx="250" cy="256" r="46"/>
+      <circle class="skin" cx="250" cy="256" r="37"/>
+      <path class="thin" d="M250 210 L250 216 M273 216 L270 221 M290 233 L285 236 M296 256 L290 256 M290 279 L285 276 M273 296 L270 291 M250 302 L250 296 M227 296 L230 291 M210 279 L215 276 M204 256 L210 256 M210 233 L215 236 M227 216 L230 221"/>
+      <path class="ink" d="M236 270 L262 284"/>
+      <path class="thin" d="M240 276 L343 90 M245 279 L347 92 M250 282 L350 94 M255 285 L353 97"/>
+      <path class="shade" d="M250 219 A37 37 0 0 1 287 256 A37 37 0 0 1 250 293 A52 52 0 0 0 250 219 Z"/>
+    </g>
+
+    <!-- its preset: a tag of settings tied to the neck -->
+    <path class="thin" d="M448 74 C470 60 486 62 500 78"/>
+    <path class="skin" d="M496 72 L590 66 L596 150 L502 156 Z"/>
+    <circle class="ink" cx="508" cy="82" r="3.5"/>
+    <path class="thin" d="M516 100 L582 96 M516 118 L582 114 M516 136 L582 132"/>
+    <circle class="red" cx="538" cy="99" r="5.5"/>
+    <circle class="red" cx="566" cy="115" r="5.5"/>
+    <circle class="red" cx="528" cy="135" r="5.5"/>
+
+    <path class="go" d="M410 246 L474 246"/>
+
+    <!-- audio: a pluck and its decay -->
+    <path class="ink" d="M492 246 L500 246 L506 196 L514 292 L522 208 L530 282 L538 218 L546 272 L554 228 L562 264 L570 236 L578 257 L586 241 L594 252 L602 244 L612 248 L640 246"/>
+
+    <path class="go" d="M656 246 L714 246"/>
+
+    <!-- the ears: a spectrogram on a card -->
+    <path class="skin" d="M730 180 L900 176 L904 310 L734 314 Z"/>
+    <path class="thin" d="M748 296 L888 293 M748 296 L746 194"/>
+    <path class="ink" d="M756 284 C790 283 830 285 884 284"/>
+    <path class="ink" d="M756 262 C786 262 818 263 862 264"/>
+    <path class="ink" d="M756 240 C780 240 800 241 832 242"/>
+    <path class="thin" d="M756 220 C772 220 786 221 806 221 M756 204 C766 204 774 205 786 205"/>
+    <path class="shade" d="M752 200 L772 200 L772 290 L752 290 Z"/>
+
+    <!-- a recording: a tape reel -->
+    <circle class="dark" cx="820" cy="372" r="34"/>
+    <circle class="skin" cx="820" cy="372" r="9"/>
+    <path class="thin" d="M820 348 L820 358 M841 384 L832 379 M799 384 L808 379"/>
+    <path class="go" d="M868 362 C900 356 910 340 906 322"/>
+
+    <!-- fitting: what the ears learn from a recording sets the preset -->
+    <path class="fit" d="M756 168 C748 104 690 84 610 104"/>
+  </g>
+
+  <text x="103" y="322">notes or MIDI</text>
+  <text x="336" y="330">an instrument</text>
+  <text x="336" y="350" class="small">a physical model</text>
+  <text x="546" y="50">its preset</text>
+  <text x="566" y="322">audio</text>
+  <text x="872" y="140">ears</text>
+  <text x="872" y="161" class="small">spectrum, loudness, pitch</text>
+  <text x="730" y="398">a recording</text>
+  <text x="700" y="74" class="redt">fit</text>
+</svg>
