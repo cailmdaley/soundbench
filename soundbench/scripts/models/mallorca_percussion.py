@@ -9,7 +9,6 @@ import copy
 import math
 from functools import lru_cache
 from pathlib import Path
-import tomllib
 
 import numpy as np
 from numba import njit
@@ -19,6 +18,7 @@ from scipy.special import j1, jn_zeros
 
 from .banjo import membrane_modes
 from .note_random import note_rng
+from soundbench.scripts.paths import preset_path, read_preset
 
 ROOT = Path(__file__).resolve().parents[2]
 MODELS = ("tambori", "castanyoles", "ximbomba")
@@ -30,8 +30,7 @@ XIMBOMBA_DEFAULTS = {"pot_hz": 200., "pot_coupling": 0., "pot_q": 5.}
 def load_config(model, path=None):
     if model not in MODELS:
         raise ValueError(f"unknown percussion model {model!r}")
-    path = Path(path) if path else ROOT / f"instruments/models/{model}.toml"
-    c = tomllib.loads(path.read_text())
+    c = read_preset(path or preset_path(model))
     if c.get("instrument") != model:
         raise ValueError("preset instrument does not match model")
     schema = {

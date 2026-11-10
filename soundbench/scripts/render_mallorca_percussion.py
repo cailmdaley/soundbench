@@ -16,9 +16,9 @@ import time
 import mido
 import numpy as np
 
-from soundbench.scripts.paths import parameters_label, parameters_path
+from soundbench.scripts.paths import preset_bytes, preset_label, preset_path
 from soundbench.scripts.instrumentation import resolve_instruments
-from soundbench.scripts.models.mallorca_percussion import ROOT, load_config, render
+from soundbench.scripts.models.mallorca_percussion import load_config, render
 from soundbench.scripts.perform import TempoMap
 from soundbench.scripts.render_model import write_wav
 
@@ -55,15 +55,15 @@ def gestures(midi, index):
 
 def selected_config(model, settings):
     options = settings.get(f"{model}_model", {})
-    allowed = {"parameters", "output_gain", "seed"}
+    allowed = {"preset", "output_gain", "seed"}
     if model == "castanyoles":
         allowed |= {"dancers", "timing_ms", "tuning_cents"}
     if set(options)-allowed:
         raise ValueError(f"unknown {model}_model option")
-    path = parameters_path(options.get("parameters", f"instruments/models/{model}.toml"))
+    path = preset_path(model, options.get("preset"))
     c = load_config(model, path)
     for k, v in options.items():
-        if k == "parameters":
+        if k == "preset":
             continue
         if not isinstance(v, (int, float)) or not math.isfinite(v):
             raise ValueError(f"invalid {model}_model.{k}")
@@ -72,7 +72,7 @@ def selected_config(model, settings):
         if k == "dancers" and v > 16 or k == "timing_ms" and not 0 <= v <= 30 or k == "tuning_cents" and not 0 <= v <= 100 or k == "output_gain" and v <= 0:
             raise ValueError(f"invalid {k}")
         c["engine" if k in ("seed", "output_gain") else "body"][k] = v
-    digest = hashlib.sha256(path.read_bytes()+json.dumps(options, sort_keys=True).encode()).hexdigest()
+    digest = hashlib.sha256(preset_bytes(path)+json.dumps(options, sort_keys=True).encode()).hexdigest()
     return c, path, digest
 
 
@@ -98,7 +98,7 @@ def main():
             raise ValueError(f"{model} stem clips or is nonfinite (peak {peak}); reduce output_gain")
         write_wav(Path(job["output"]), audio, c["engine"]["sample_rate"])
         index = str(job["index"])
-        stems[index] = dict(engine="model", model=model, parameters=parameters_label(path),
+        stems[index] = dict(engine="model", model=model, parameters=preset_label(path),
                             parameters_sha256=digest, overrides=settings.get(f"{model}_model", {}))
         played[index], peaks[index] = rows, peak
     metrics = dict(stems=stems, gestures=played, peaks=peaks, render_seconds=time.perf_counter()-start,

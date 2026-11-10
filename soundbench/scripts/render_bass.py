@@ -13,9 +13,9 @@ from pathlib import Path
 import time
 import mido
 import numpy as np
-from soundbench.scripts.paths import parameters_path
+from soundbench.scripts.paths import preset_bytes, preset_path
 from soundbench.scripts.instrumentation import matching_tracks
-from soundbench.scripts.models.bass import ROOT, load_config, assign_string, render, note
+from soundbench.scripts.models.bass import load_config, assign_string, render, note
 from soundbench.scripts.perform import TempoMap, BarMap
 from soundbench.scripts.render_model import notes, write_wav
 
@@ -134,12 +134,9 @@ def main():
     args = parser.parse_args()
     data = json.loads(args.manifest.read_text())
     options = data['settings'].get('bass_model',{})
-    if set(options)-{'preset','parameters','output_gain','seed','intonation_cents'}:
+    if set(options)-{'preset','output_gain','seed','intonation_cents'}:
         raise ValueError('unknown bass_model option')
-    preset = options.get('preset','gut')
-    if preset not in ('gut','steel'):
-        raise ValueError('bass preset must be gut or steel')
-    path = parameters_path(options.get('parameters',f'instruments/models/bass-{preset}.toml'))
+    path = preset_path('bass', options.get('preset'))
     c = load_config(path)
     for key in ('output_gain','seed'):
         if key in options:
@@ -158,12 +155,12 @@ def main():
     stems = {}
     for owner,job in enumerate(data['jobs']):
         write_wav(Path(job['output']),audio[owner])
-        stems[str(job['index'])] = dict(engine='model',model='bass',preset=preset,parameters=str(path),
-            parameters_sha256=hashlib.sha256(path.read_bytes()+json.dumps(options,sort_keys=True).encode()).hexdigest(),overrides=options)
+        stems[str(job['index'])] = dict(engine='model',model='bass',parameters=str(path),
+            parameters_sha256=hashlib.sha256(preset_bytes(path)+json.dumps(options,sort_keys=True).encode()).hexdigest(),overrides=options)
     metrics = dict(stems=stems,audio_seconds=seconds,render_seconds=elapsed,realtime_factor=seconds/elapsed,
                    assignment=assignment,peak=float(np.max(abs(audio),initial=0)))
     args.manifest.with_suffix('.metrics.json').write_text(json.dumps(metrics,indent=2)+'\n')
-    print(f'Bass ({preset}): {seconds:.2f}s in {elapsed:.3f}s ({seconds/elapsed:.1f}x realtime)')
+    print(f'Bass ({path.stem}): {seconds:.2f}s in {elapsed:.3f}s ({seconds/elapsed:.1f}x realtime)')
 
 
 if __name__ == '__main__':

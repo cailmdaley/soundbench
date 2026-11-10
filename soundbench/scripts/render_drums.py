@@ -16,8 +16,8 @@ import time
 import mido
 import numpy as np
 
-from soundbench.scripts.paths import parameters_label, parameters_path
-from soundbench.scripts.models.drums import ROOT, load_config, render
+from soundbench.scripts.paths import preset_bytes, preset_label, preset_path
+from soundbench.scripts.models.drums import load_config, render
 from soundbench.scripts.perform import TempoMap
 from soundbench.scripts.render_model import write_wav
 
@@ -46,9 +46,9 @@ def gestures(midi, index):
 
 def selected_config(settings):
     options = settings.get("drums_model", {})
-    if set(options)-{"parameters", "output_gain", "seed"}:
+    if set(options)-{"preset", "output_gain", "seed"}:
         raise ValueError("unknown drums_model option")
-    path = parameters_path(options.get("parameters", "instruments/models/drums.toml"))
+    path = preset_path("drums", options.get("preset"))
     c = load_config(path)
     for k in ("seed", "output_gain"):
         if k in options:
@@ -56,7 +56,7 @@ def selected_config(settings):
             if not isinstance(v, (int, float)) or not math.isfinite(v) or (k == "seed" and (type(v) is not int or v < 0)) or (k == "output_gain" and not 0 < v <= 4):
                 raise ValueError(f"invalid drums_model.{k}")
             c["engine"][k] = v
-    digest = hashlib.sha256(path.read_bytes()+json.dumps(options, sort_keys=True).encode()).hexdigest()
+    digest = hashlib.sha256(preset_bytes(path)+json.dumps(options, sort_keys=True).encode()).hexdigest()
     return c, path, digest
 
 
@@ -88,7 +88,7 @@ def main():
             raise ValueError(f"drum stem clips or is nonfinite ({peak}); reduce output_gain")
         write_wav(Path(job["output"]), audio, c["engine"]["sample_rate"])
         index = str(job["index"])
-        stems[index] = dict(engine="model", model="drums", parameters=parameters_label(path), parameters_sha256=digest, overrides=data.get("settings", {}).get("drums_model", {}))
+        stems[index] = dict(engine="model", model="drums", parameters=preset_label(path), parameters_sha256=digest, overrides=data.get("settings", {}).get("drums_model", {}))
         played[index] = dict(notes=rows, cc4=pedals)
         peaks[index] = peak
     metrics = dict(stems=stems, gestures=played, peaks=peaks, render_seconds=time.perf_counter()-start, audio_seconds=seconds)

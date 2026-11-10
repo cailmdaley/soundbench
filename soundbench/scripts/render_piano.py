@@ -14,8 +14,8 @@ import time
 import mido
 import numpy as np
 
-from soundbench.scripts.paths import parameters_label, parameters_path
-from soundbench.scripts.models.piano import CONFIG, load_config, render
+from soundbench.scripts.paths import preset_bytes, preset_label, preset_path
+from soundbench.scripts.models.piano import load_config, render
 from soundbench.scripts.perform import TempoMap
 from scipy.io.wavfile import write as write_pcm
 
@@ -48,10 +48,9 @@ def main():
     args = parser.parse_args()
     data = json.loads(args.manifest.read_text())
     options = data.get('settings', {}).get('piano_model', {})
-    if set(options)-{'parameters', 'output_gain'}:
+    if set(options)-{'preset', 'output_gain'}:
         raise ValueError('unknown piano_model setting')
-    root = CONFIG.parents[2]
-    path = parameters_path(options.get('parameters', str(CONFIG.relative_to(root))))
+    path = preset_path('piano', options.get('preset'))
     cfg = load_config(path)
     if 'output_gain' in options:
         gain = float(options['output_gain'])
@@ -62,11 +61,7 @@ def main():
     tempo = TempoMap(midi)
     end = max(sum(m.time for m in track) for track in midi.tracks)
     seconds = tempo.seconds_at(end)+cfg['engine']['tail_seconds']
-    payload = path.read_bytes()+json.dumps(options, sort_keys=True).encode()
-    for key in ('modal_data','release_data','coupled_data','body_data'):
-        if key in cfg['engine']:
-            payload+=(path.parent/cfg['engine'][key]).read_bytes()
-    digest = hashlib.sha256(payload).hexdigest()
+    digest = hashlib.sha256(preset_bytes(path)+json.dumps(options, sort_keys=True).encode()).hexdigest()
     warm = time.perf_counter()
     render([{'time':0, 'off':.02, 'pitch':60, 'velocity':64}], .1, cfg)
     compile_seconds = time.perf_counter()-warm
@@ -87,7 +82,7 @@ def main():
         write_pcm(Path(job['output']), 48000, np.rint(audio*2147483647).astype('<i4'))
         count += len(rows)
         stems[str(job['index'])] = {'engine':'model', 'model':'piano',
-                                  'parameters':parameters_label(path), 'parameters_sha256':digest}
+                                  'parameters':preset_label(path), 'parameters_sha256':digest}
     metrics = {'stems':stems, 'notes':count, 'peak':peak, 'audio_seconds':seconds,
                'render_seconds':elapsed, 'compile_or_cache_seconds':compile_seconds,
                'realtime_factor':seconds*len(data['jobs'])/max(elapsed, 1e-9)}

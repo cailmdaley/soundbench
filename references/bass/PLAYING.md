@@ -10,9 +10,8 @@ No samples, keyswitch notes or GM programs select gestures.
 bass = { model = "bass", gain_db = 1, pan = 0 }
 
 [bass_model]
-preset = "gut"                   # gut or steel
+preset = "default"               # gut strings; or "steel"
 intonation_cents = 2.0            # seeded stopped-note variance, 0..15 cents
-# parameters = "instruments/models/bass-gut.toml"
 # output_gain = 1.0               # absolute engine gain, not dB; omit for calibration
 # seed = 1892
 

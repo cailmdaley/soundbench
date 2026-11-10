@@ -12,18 +12,9 @@ import mido
 import numpy as np
 import soundfile as sf
 
-RENDERERS = {
-    "banjo": "render_model", "guitar": "render_guitar", "piano": "render_piano",
-    "bass": "render_bass", "electric-bass": "render_electric_bass", "fiddle": "render_fiddle",
-    "mandolin": "render_folk_strings", "dobro": "render_folk_strings", "drums": "render_drums",
-    "organ": "render_keys", "pipe-organ": "render_keys", "electric-piano": "render_keys",
-    "flabiol": "render_flabiol", "xeremia": "render_xeremia", "skinpipe": "render_skinpipe",
-    "tambori": "render_mallorca_percussion", "castanyoles": "render_mallorca_percussion",
-    "ximbomba": "render_mallorca_percussion", "voice": "render_voice", "voice2": "render_voice2",
-    "voice3": "render_voice3", "chimera": "render_chimera", "machine-voice": "render_machine_voice",
-    "tr808": "render_drum_machine", "tr808-bass": "render_drum_machine",
-    "tr909": "render_drum_machine", "linn": "render_drum_machine",
-}
+from .scripts.model_dispatch import RENDERERS
+from .scripts.paths import preset_names
+
 SAMPLE_RATE = 48000
 
 
@@ -73,12 +64,19 @@ def notes_to_midi(notes, controls=()):
     return midi
 
 
-def render(model, notes=None, *, midi=None, settings=None, controls=()):
+def presets(model):
+    """The named presets bundled for an instrument, default first."""
+    return preset_names("tr808" if model == "tr808-bass" else model)
+
+
+def render(model, notes=None, *, preset=None, midi=None, settings=None, controls=()):
     """Return (float audio [frames, channels], 48000) without normalization.
 
-    Supply notes OR a MIDI path/MidiFile. MIDI CC/pitch bends and the settings
-    sidecar carry articulations. All note-bearing tracks play the selected model.
-    A renderer subprocess isolates JIT compilation and releases its memory.
+    Supply notes OR a MIDI path/MidiFile. `preset` is a bundled preset's name
+    (see `presets(model)`) or a path to a preset file of one's own. MIDI CC/pitch
+    bends and the settings sidecar carry articulations. All note-bearing tracks
+    play the selected model. A renderer subprocess isolates JIT compilation and
+    releases its memory.
     """
     if model not in RENDERERS:
         raise ValueError(f"unknown model {model!r}; choose from {', '.join(RENDERERS)}")
@@ -92,6 +90,11 @@ def render(model, notes=None, *, midi=None, settings=None, controls=()):
         raise ValueError("the input contains no sounding notes")
     settings = copy.deepcopy(settings or {})
     settings["instruments"] = {str(n + 1): {"model": model} for n in range(len(indices))}
+    if preset is not None:
+        if not presets(model):
+            raise ValueError(f"{model} has no presets")
+        key = ("tr808" if model == "tr808-bass" else model).replace("-", "_") + "_model"
+        settings.setdefault(key, {})["preset"] = str(preset)
     with tempfile.TemporaryDirectory(prefix="soundbench-") as directory:
         root = Path(directory)
         midi_path = root / "notes.mid"; performance.save(midi_path)
@@ -99,7 +102,7 @@ def render(model, notes=None, *, midi=None, settings=None, controls=()):
         manifest = root / f"render.{model}.json"
         manifest.write_text(json.dumps({"model": model, "instrument": model, "performed_midi": str(midi_path), "score_midi": str(midi_path),
                                         "settings": settings, "jobs": jobs}))
-        process = subprocess.run([sys.executable, "-m", "soundbench.scripts." + RENDERERS[model], str(manifest)],
+        process = subprocess.run([sys.executable, "-m", "soundbench.scripts." + RENDERERS[model][0].stem, str(manifest)],
                                  text=True, capture_output=True)
         if process.returncode:
             raise RuntimeError(process.stderr.strip() or process.stdout.strip())

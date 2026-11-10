@@ -7,19 +7,19 @@ No recorded waveforms enter synthesis. String numbers 1..4 are G2 D2 A1 E1.
 from __future__ import annotations
 import math
 from pathlib import Path
-import tomllib
 import numpy as np
 from numba import njit
 from scipy.signal import lfilter
 from soundbench.scripts.models.banjo import _output_guard
+from soundbench.scripts.paths import preset_path, read_preset
 
 ROOT = Path(__file__).resolve().parents[2]
-CONFIG = ROOT/'instruments/models/bass-gut.toml'
+CONFIG = preset_path('bass')
 KINDS = {'pizz': 0, 'release': 1, 'slide': 2, 'slap': 3, 'dead': 4, 'ghost': 5, 'damp': 6, 'slap-back': 7}
 
 
 def load_config(path=CONFIG):
-    c = tomllib.loads(Path(path).read_text())
+    c = read_preset(path)
     if set(c) != {'engine', 'strings', 'excitation', 'body', 'fingerboard'}:
         raise ValueError('expected engine, strings, excitation, body, fingerboard')
     for table in c.values():

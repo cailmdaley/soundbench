@@ -79,7 +79,7 @@ class ChimeraTimeline(unittest.TestCase):
 
 class ChimeraExpression(unittest.TestCase):
     def test_shared_mark_resolution_passage_progress_and_defaults(self):
-        from soundbench.scripts.render_voice3 import apply_marks
+        from soundbench.scripts.singing import apply_marks
         s = Syllable("a", [], ["AA1"], [])
         rows = [{**row(.4 + i, 1.4 + i, syllable=s), "tick": i * 480} for i in range(4)]
         marks = [{"start_tick": 480, "end_tick": 1920, "character": None,
@@ -110,25 +110,21 @@ class ChimeraExpression(unittest.TestCase):
         self.assertEqual(t["controls"], [{"time": 0., "pressure": 9., "tension": .55, "breathiness": .15}])
         self.assertEqual(t["phrases"][0]["vibrato"], 35)
 
-    def test_unsupported_options_fail_instead_of_disappearing(self):
+    def test_unsupported_intents_fail_instead_of_disappearing(self):
         from soundbench.scripts.render_chimera import check_supported
-        from soundbench.scripts.models import voice3
-        rows = [{**row(.4, 1.4), "intent": voice3.character_settings()}]
+        from soundbench.scripts.singing import character_settings, settings_for
+        rows = [{**row(.4, 1.4), "intent": character_settings()}]
         for option in ["machine", "scatter", "spread", "timing_sd_s"]:
-            with self.subTest(option=option), self.assertRaisesRegex(ValueError, "does not support"):
-                check_supported({}, {option: 0}, rows, "tenor")
-        with self.assertRaisesRegex(ValueError, "does not support"):
-            check_supported({"spread": .5}, {}, rows, "tenor")
-        with self.assertRaisesRegex(ValueError, "physical singer"):
-            check_supported({}, {}, rows, "machine")
+            with self.subTest(option=option), self.assertRaisesRegex(ValueError, "takes"):
+                settings_for({"singing": {"parts": {"tenor": {option: 0}}}})
         rows[0]["intent"]["vowel_opening_hz"] = 20
         with self.assertRaisesRegex(ValueError, "vowel_opening_hz"):
-            check_supported({}, {}, rows, "tenor")
+            check_supported({}, rows, "tenor")
         rows[0]["intent"]["vowel_opening_hz"] = 0
         rows[0]["pitch"] = 47
         with self.assertRaisesRegex(ValueError, "outside range"):
-            check_supported({}, {}, rows, "tenor")
-        check_supported({}, {"range": [47, 72]}, rows, "tenor")
+            check_supported({}, rows, "tenor")
+        check_supported({"range": [47, 72]}, rows, "tenor")
 
 
 class ChimeraManifest(unittest.TestCase):
@@ -157,7 +153,7 @@ class ChimeraManifest(unittest.TestCase):
         performed.save(self.root / "performed.mid")
         self.data = {"performed_midi": str(self.root / "performed.mid"),
                      "score_midi": str(self.root / "score.mid"),
-                     "settings": {"voice3": {"seed": 1979, "parts": {
+                     "settings": {"singing": {"seed": 1979, "parts": {
                          "tenor": {"singer": "tenor", "character": "worn", "consonant_scale": 1.5},
                          "alto": {"singer": "alto", "lyrics_from": "tenor", "lag_ms": 15}},
                          "marks": [{"part": "tenor", "bar": 1, "beat": 2, "vibrato": "straight"}]}},
@@ -173,7 +169,7 @@ class ChimeraManifest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "aspiration and frication"):
             prepare(data)
 
-    def test_prepare_consumes_same_voice3_manifest_without_score_edits(self):
+    def test_prepare_reads_the_singing_block(self):
         from soundbench.scripts.render_chimera import prepare
         jobs = prepare(self.data)
         self.assertEqual(len(jobs), 2)
@@ -190,46 +186,39 @@ class ChimeraManifest(unittest.TestCase):
 
     def test_section_rejected_and_baseline_only_unsupported_settings_documented(self):
         from soundbench.scripts.render_chimera import prepare
-        p = self.data["settings"]["voice3"]["parts"]["tenor"]
+        p = self.data["settings"]["singing"]["parts"]["tenor"]
         p["singers"] = ["tenor", "tenor"]
         with self.assertRaisesRegex(ValueError, "sections are unsupported"):
             prepare(self.data)
         del p["singers"]
-        p["timing_sd_s"] = .01
-        with self.assertRaisesRegex(ValueError, "does not support"):
-            prepare(self.data)
         self.assertNotIn("expression", prepare(self.data, baseline=True)[0][1])
 
-    def test_selectable_binding_voice3_unmodified_and_shared_marks_are_routed(self):
+    def test_binding_and_shared_marks_are_routed(self):
         import copy
         import mido
         from soundbench.scripts.instrumentation import resolve_instruments, STEREO_INSTRUMENTS
         from soundbench.scripts.model_dispatch import RENDERERS, vocal_marks
         midi = mido.MidiFile(self.data["performed_midi"])
-        settings = {"instruments": {"tenor": {"model": "chimera"}, "alto": {"model": "voice3"}}}
+        settings = {"instruments": {"tenor": {"model": "chimera"}, "alto": {"model": "chimera"}}}
         bindings = resolve_instruments(midi, settings)
         self.assertEqual(bindings[1].model, "chimera")
-        self.assertEqual(bindings[2].model, "voice3")
-        self.assertEqual(bindings[2].instrument, "voice3")
+        self.assertEqual(bindings[2].instrument, "chimera")
         self.assertEqual(bindings[2].gain_db, 0)
-        self.assertIn("voice3", STEREO_INSTRUMENTS)
         self.assertNotIn("chimera", STEREO_INSTRUMENTS)
-        self.assertEqual(RENDERERS["voice3"][0].name, "render_voice3.py")
         self.assertEqual(RENDERERS["chimera"][0].name, "render_chimera.py")
         marks = [{"part": "tenor", "bar": 1, "vibrato": "straight"},
                  {"part": "2", "bar": 1, "vibrato": "emerging"}]
         original = copy.deepcopy(marks)
         names = {1: "tenor", 2: "alto"}
-        self.assertEqual(vocal_marks(marks, bindings, names, "chimera"), [{**marks[0], "part": "1"}])
-        self.assertEqual(vocal_marks(marks, bindings, names, "voice3"), [{**marks[1], "part": "1"}])
+        self.assertEqual(vocal_marks(marks, bindings, names, "chimera"), [{**marks[0], "part": "1"}, marks[1]])
         self.assertEqual(marks, original)
-        with self.assertRaisesRegex(ValueError, "voice3 or chimera"):
+        with self.assertRaisesRegex(ValueError, "one sung part"):
             vocal_marks([{"part": "absent"}], bindings, names, "chimera")
         # A numeric part counts singers, not every track.
         from types import SimpleNamespace as B
-        band = {0: B(model="guitar"), 1: B(model="voice3"), 2: B(model="voice3")}
+        band = {0: B(model="guitar"), 1: B(model="chimera"), 2: B(model="chimera")}
         named = {0: "guitar", 1: "lead", 2: "harmony"}
-        self.assertEqual(vocal_marks([{"part": "2"}], band, named, "voice3"), [{"part": "2"}])
+        self.assertEqual(vocal_marks([{"part": "2"}], band, named, "chimera"), [{"part": "2"}])
 
     def test_dispatch_manifests_keep_lexicon_parts_and_filter_marks_without_mutation(self):
         import copy
@@ -240,9 +229,9 @@ class ChimeraManifest(unittest.TestCase):
         from soundbench.scripts.instrumentation import resolve_instruments
         from soundbench.scripts.model_dispatch import render_model_stems
         settings = copy.deepcopy(self.data["settings"])
-        settings["instruments"] = {"tenor": {"model": "chimera"}, "alto": {"model": "voice3"}}
-        settings["voice3"]["lexicon"] = {"a": "AA1"}
-        settings["voice3"]["marks"].append({"part": "alto", "bar": 1, "vibrato": "emerging"})
+        settings["instruments"] = {"tenor": {"model": "chimera"}, "alto": {"model": "chimera"}}
+        settings["singing"]["lexicon"] = {"a": "AA1"}
+        settings["singing"]["marks"].append({"part": "alto", "bar": 1, "vibrato": "emerging"})
         original = copy.deepcopy(settings)
         midi = mido.MidiFile(self.data["performed_midi"])
         bindings = resolve_instruments(midi, settings)
@@ -251,16 +240,15 @@ class ChimeraManifest(unittest.TestCase):
             manifest = Path(command[-1])
             data = json.loads(manifest.read_text())
             seen.append(data)
-            self.assertEqual(data["settings"]["voice3"]["parts"], settings["voice3"]["parts"])
-            self.assertEqual(data["settings"]["voice3"]["lexicon"], {"a": "AA1"})
-            self.assertEqual(len(data["settings"]["voice3"]["marks"]), 1)
-            self.assertEqual(data["settings"]["voice3"]["marks"][0]["part"], "1")
+            self.assertEqual(data["settings"]["singing"]["parts"], settings["singing"]["parts"])
+            self.assertEqual(data["settings"]["singing"]["lexicon"], {"a": "AA1"})
+            self.assertEqual([m["part"] for m in data["settings"]["singing"]["marks"]], ["1", "2"])
             manifest.with_suffix(".metrics.json").write_text('{"stems": {}}')
             return SimpleNamespace(returncode=0, stdout="", stderr="")
         with patch("soundbench.scripts.model_dispatch.subprocess.run", side_effect=process):
             render_model_stems(self.data["performed_midi"], self.data["score_midi"], settings,
                                bindings, self.root, "test")
-        self.assertEqual(len(seen), 2)
+        self.assertEqual(len(seen), 1)
         self.assertEqual(settings, original)
 
 

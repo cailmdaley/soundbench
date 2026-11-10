@@ -8,21 +8,21 @@ from functools import lru_cache
 import json
 import math
 from pathlib import Path
-import tomllib
 
 import numpy as np
 from numba import njit
 from scipy.signal import butter, lfilter, resample_poly, sosfilt
 from soundbench.scripts.models.banjo import _render, _output_guard
 from soundbench.scripts.models.string_loss import design_loss, PITCHES
+from soundbench.scripts.paths import preset_path, read_preset
 
 ROOT = Path(__file__).resolve().parents[2]
-CONFIG = ROOT / 'instruments/models/electric-bass-flat.toml'
+CONFIG = preset_path('electric-bass')
 SR = 48000
 
 
 def load_config(path=CONFIG):
-    c = tomllib.loads(Path(path).read_text())
+    c = read_preset(path)
     if set(c) != {'engine', 'strings', 'excitation', 'pickup', 'amp'}:
         raise ValueError('expected engine, strings, excitation, pickup, amp')
     for table in c.values():

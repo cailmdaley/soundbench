@@ -22,15 +22,15 @@ from __future__ import annotations
 import copy
 import math
 from pathlib import Path
-import tomllib
 import zlib
 
 from numba import njit
 import numpy as np
 from scipy.signal import lfilter, resample_poly
+from soundbench.scripts.paths import preset_path, read_preset
 
 ROOT = Path(__file__).resolve().parents[2]
-CONFIGS = {m: ROOT / f"instruments/models/{m}.toml" for m in ("tr808", "tr909", "linn")}
+CONFIGS = {m: preset_path(m) for m in ("tr808", "tr909", "linn")}
 LN1000 = math.log(1000.0)
 
 # Shared GM-following key map; a key a machine lacks is a render error.
@@ -67,10 +67,10 @@ def load_config(machine, path=None, overrides=None):
     """A machine preset, with sidecar overrides merged into its exact schema."""
     if machine not in CONFIGS:
         raise ValueError(f"unknown drum machine {machine!r}")
-    template = tomllib.loads(CONFIGS[machine].read_text())
+    template = read_preset(CONFIGS[machine])
     c = copy.deepcopy(template)
     if path is not None:
-        preset = tomllib.loads(Path(path).read_text())
+        preset = read_preset(path)
         if preset.get("machine") != machine:
             raise ValueError(f"preset is not a {machine} preset")
         _merge(c, preset, "")

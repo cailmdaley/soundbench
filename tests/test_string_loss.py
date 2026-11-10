@@ -16,10 +16,11 @@ ROOT = Path(__file__).resolve().parents[1] / "soundbench"
 sys.path.insert(0, str(ROOT/'scripts'))
 from soundbench.scripts.models.banjo import load_config, render, _rich_coefficients, _output_guard
 from soundbench.scripts.models.string_loss import design_loss, loss_bank
+from soundbench.scripts.paths import preset_path
 
 
 def rich_config():
-    c = load_config()
+    c = load_config(preset_path('banjo', 'membrane'))
     c['strings']['decay_hz'] = [80., 300., 1000., 2000., 3000., 8000., 24000.]
     c['strings']['decay_t60'] = [[2.5, 2.5, 1., .4, .2, .1, .03]]*5
     c['bridge']['coupling'] = c['bridge']['head_feedback'] = 0.

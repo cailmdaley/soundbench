@@ -8,15 +8,14 @@ modal feedback is bounded and delayed one sample to avoid an algebraic loop.
 from __future__ import annotations
 
 import math
-from pathlib import Path
-import tomllib
 
 import numpy as np
 from numba import njit
 from scipy.signal import lfilter
 from scipy.special import jn_zeros, jv
+from soundbench.scripts.paths import preset_path, read_preset
 
-CONFIG = Path(__file__).resolve().parents[2] / "instruments/models/banjo.toml"
+CONFIG = preset_path("banjo")
 
 
 MEMBRANE_KEYS = {"fundamental_hz", "bridge_radius", "max_hz", "t60_fundamental",
@@ -73,7 +72,7 @@ def membrane_modes(head, radius_m=0.14):
 
 
 def load_config(path=CONFIG):
-    config = tomllib.loads(Path(path).read_text())
+    config = read_preset(path)
     head = config.get("head", {})
     if isinstance(head, dict) and set(head) == MEMBRANE_KEYS:
         if not (0 < head["bridge_radius"] < 1 and 0 < head["fundamental_hz"] < head["max_hz"] < 24000

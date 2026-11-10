@@ -18,6 +18,7 @@ import numpy as np
 import soundfile as sf
 from scipy.signal import stft, find_peaks, resample_poly
 from scipy.optimize import least_squares
+from soundbench.scripts.paths import data_path
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / 'soundfonts/SalamanderGrandPiano-SFZ+FLAC-V3+20200602'
@@ -178,7 +179,7 @@ def main():
     export = {'schema': 1, 'modes': MODES, 'velocities': LAYERS, 'profiles': profiles,
               'source': 'Alexander Holm, Salamander Grand Piano V3, CC BY 3.0',
               'source_sfz_sha256': hashlib.sha256((SOURCE/'SalamanderGrandPiano-V3+20200602.sfz').read_bytes()).hexdigest()}
-    target = ROOT/'instruments/models/piano-modal.json'
+    target = data_path('piano', 'modal.json')
     target.write_text(json.dumps(export, separators=(',', ':'))+'\n')
     np.savez_compressed(out/'observations.npz', observed=observations, predicted=pred.reshape(len(rows), MODES, -1).transpose(0, 2, 1), times=t, pitches=[r[0] for r in rows], layers=[r[1] for r in rows])
     metrics = {'clips': len(rows), 'notes': len(notes), 'layers': 16, 'steps': args.steps,

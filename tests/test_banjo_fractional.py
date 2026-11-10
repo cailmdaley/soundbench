@@ -15,7 +15,10 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1] / "soundbench"
 sys.path.insert(0, str(ROOT / 'scripts'))
-from soundbench.scripts.models.banjo import CONFIG, load_config, render as engine_render
+from soundbench.scripts.models.banjo import load_config, render as engine_render
+from soundbench.scripts.paths import preset_path
+
+CONFIG = preset_path('banjo', 'membrane')
 from soundbench.scripts.models.banjo_fit import twin
 
 
@@ -26,7 +29,7 @@ def normalized(audio):
 
 class FractionalPluckTests(unittest.TestCase):
     def setUp(self):
-        self.config = load_config()
+        self.config = load_config(CONFIG)
         self.config['excitation']['fractional_pluck'] = True
         self.config['excitation']['position_jitter'] = 0.
         self.note = dict(string=1, pitch=62, frequency=440 * 2 ** ((62 - 69) / 12))
@@ -110,8 +113,8 @@ class FractionalPluckTests(unittest.TestCase):
         np.testing.assert_allclose(actual, predicted, atol=2e-5)
 
     def test_historical_integer_path_is_unchanged_without_flag(self):
-        legacy = load_config()
-        explicit = load_config()
+        legacy = load_config(CONFIG)
+        explicit = load_config(CONFIG)
         explicit['excitation']['fractional_pluck'] = False
         events = [[0, 0, 0, 0, 62, 90, 0, 0, .173, 0, 1]]
         a = engine_render(events, .1, config=legacy)

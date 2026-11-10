@@ -11,7 +11,7 @@ CC64 sustain is independent on each MIDI channel.
 keys = { model = "electric-piano", gain_db = 0, pan = 0 }
 
 [electric_piano_model]
-parameters = "instruments/models/electric-piano-tremolo.toml"
+preset = "tremolo"
 
 [[controls]]
 track = "keys"
@@ -28,7 +28,7 @@ Set the effect mode before the note-on or in a rest.
 
 | Gesture | MIDI request | Behavior |
 | --- | --- | --- |
-| Soft / singing / barking strike | Velocities about 35–60 / 60–90 / 95–127 | Continuous hammer/pickup response; use `electric-piano-bark.toml` for much stronger high-velocity bite. |
+| Soft / singing / barking strike | Velocities about 35–60 / 60–90 / 95–127 | Continuous hammer/pickup response; use the `bark` preset for much stronger high-velocity bite. |
 | Damper release | Note-off, CC64 up | Felt damping has 55 ms amplitude e-fold time, plus a low-frequency felt thump. No pedal means damping begins at note-off. |
 | Sustain | CC64 ≥64 down, <64 up | Holds released notes until pedal-up. No half-pedal or sympathetic resonance. Close the final pedal explicitly. |
 | Swell / volume | CC11 0–127; default 127 | 10 ms smoothing, volume only; unlike velocity it doesn't change the strike. |
@@ -44,12 +44,11 @@ Retriggering a held pitch starts another independently decaying modal voice; rep
 
 ## Presets and timbre choice
 
-| TOML under `instruments/models/` | Use |
+| Preset | Use |
 | --- | --- |
-| `electric-piano.toml` | Rounded proxy-fit pickup/decay, effects off. Fit uses two Mark II notes, **not a verified Mark I**. |
-| `electric-piano-tremolo.toml` | Same pickup, 4.5 Hz tremolo at depth 0.5. |
-| `electric-piano-bark.toml` | Stronger pickup curvature, bell modes and coupled-tonebar beating; measured long decay retained. This is an expressive engineering alternative, not the best reference fit. |
-| `electric-piano-prior.toml` | Unfitted comparison instrument; brighter pickup and shorter decay. Not recommended as the default. |
+| `default` | Rounded proxy-fit pickup/decay, effects off. Fit uses two Mark II notes, **not a verified Mark I**. |
+| `tremolo` | Same pickup, 4.5 Hz tremolo at depth 0.5. |
+| `bark` | Stronger pickup curvature, bell modes and coupled-tonebar beating; measured long decay retained. An expressive alternative, not the best reference fit. |
 
 The rounded and bark presets are calibrated toward −24 LUFS on the same ballad passage before mixing.
 Choose by ear; the lower fitted loss doesn't settle the composer's timbre choice.

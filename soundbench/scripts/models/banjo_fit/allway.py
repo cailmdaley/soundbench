@@ -21,7 +21,10 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import optax
-from soundbench.scripts.models.banjo import load_config, CONFIG
+from soundbench.scripts.models.banjo import load_config
+from soundbench.scripts.paths import preset_path
+
+CONFIG = preset_path('banjo', 'membrane')
 from soundbench.scripts.models.banjo_fit import twin, chain, audio, allway_loss
 
 FLAGS=dict(deployable=True,two_stage=True,glide=False,noise=False,room=True,mic=True,background=True,codec=True)

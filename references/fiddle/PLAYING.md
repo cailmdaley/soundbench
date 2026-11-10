@@ -11,7 +11,7 @@ fiddle = { model = "fiddle", gain_db = 6, pan = 0.15 }
 
 [fiddle_model]
 tuning = "AEAE"          # exactly standard, AEAE, ADAE, GDGD
-# parameters = "instruments/models/fiddle-modern.toml"  # brighter, untilted; default is the old-time fiddle.toml
+# preset = "modern"   # brighter, untilted; the default is the old-time fiddle
 
 [fiddle_strings]
 fiddle = 2               # optional selector -> physical string, high to low
@@ -20,7 +20,7 @@ fiddle = 2               # optional selector -> physical string, high to low
 
 `gain_db = 6` is a starting mix setting, not a calibrated balance against every other instrument.
 A raw old-time reel stem measures about −36 LUFS before stem gain, room and mastering.
-The house preset is the old-time tone (−1 dB/octave above 1 kHz); `fiddle-modern.toml` is the same body untilted, as a close modern recording hears it.
+The default preset is the old-time tone (−1 dB/octave above 1 kHz); `modern` is the same body untilted, as a close modern recording hears it.
 
 ## Pitch, dynamics and physical strings
 

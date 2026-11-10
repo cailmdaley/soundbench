@@ -11,9 +11,9 @@ import json
 from pathlib import Path
 import time
 import mido
-from soundbench.scripts.paths import parameters_path
+from soundbench.scripts.paths import preset_bytes, preset_path
 from soundbench.scripts.instrumentation import matching_tracks
-from soundbench.scripts.models.fiddle import ROOT, load_config, render
+from soundbench.scripts.models.fiddle import load_config, render
 from soundbench.scripts.models.fiddle_player import CALIBRATION
 from soundbench.scripts.perform import TempoMap
 from soundbench.scripts.render_model import write_wav
@@ -126,9 +126,9 @@ def main():
     args = ap.parse_args()
     data = json.loads(args.manifest.read_text())
     options = data['settings'].get('fiddle_model', {})
-    if set(options)-{'parameters', 'tuning', 'output_gain'}:
-        raise ValueError('fiddle_model accepts parameters, tuning, output_gain')
-    path = parameters_path(options.get('parameters', 'instruments/models/fiddle.toml'))
+    if set(options)-{'preset', 'tuning', 'output_gain'}:
+        raise ValueError('fiddle_model accepts preset, tuning, output_gain')
+    path = preset_path('fiddle', options.get('preset'))
     config = load_config(path, options.get('tuning', 'standard'))
     if 'output_gain' in options:
         gain = float(options['output_gain'])
@@ -144,7 +144,7 @@ def main():
     for owner, job in enumerate(data['jobs']):
         write_wav(Path(job['output']), audio[owner])
         stems[str(job['index'])] = dict(engine='model', model='fiddle',
-            parameters=str(path), parameters_sha256=hashlib.sha256(path.read_bytes()+CALIBRATION.read_bytes()+json.dumps(options, sort_keys=True).encode()).hexdigest(), overrides=options)
+            parameters=str(path), parameters_sha256=hashlib.sha256(preset_bytes(path)+CALIBRATION.read_bytes()+json.dumps(options, sort_keys=True).encode()).hexdigest(), overrides=options)
     import numpy as np
     metrics = dict(stems=stems, audio_seconds=seconds, render_seconds=elapsed,
                    peak=float(np.max(np.abs(audio))), assignment=diagnostic['assignment'],

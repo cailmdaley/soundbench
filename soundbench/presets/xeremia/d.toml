@@ -1,0 +1,8 @@
+# Constructed tonic-relative just scale, not measured Mallorcan tuning.
+# D4-tonic chanter: plagal A3 through B4; bore delay follows sounding frequency.
+inherits = "default"
+
+pitch_range = [57, 71]
+release_s = 1.5
+tail_seconds = 3.0
+tuning_cents = [0.0, -11.73, 0.0, 0.0, 3.91, 0.0, -13.69, -1.96, 0.0, 1.96, 0.0, -15.64]

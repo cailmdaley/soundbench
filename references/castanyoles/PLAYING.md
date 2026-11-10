@@ -5,14 +5,12 @@
 dancers = { model = "castanyoles", gain_db = 0, pan = 0.25 }
 
 [castanyoles_model]
-parameters = "instruments/models/castanyoles-fitted.toml"
 dancers = 6
 timing_ms = 8
 tuning_cents = 16
 ```
 
-The fitted preset is the brighter recording-fit alternative.
-Omit `parameters` for the physical-prior preset.
+The default preset is fitted to orchestral castanet recordings.
 Use a named pitched MIDI Voice (`dancers` here); track names route bindings and do not select hand or gesture.
 No GM drum map, keyswitches, pitch bends or CCs are used.
 All keys select gestures, not a chromatic scale.

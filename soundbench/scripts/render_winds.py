@@ -9,8 +9,8 @@ import time
 from scipy.io import wavfile
 import mido
 import numpy as np
-from soundbench.scripts.paths import parameters_label, parameters_path
-from soundbench.scripts.models.mallorca_winds import ROOT, load_config, render
+from soundbench.scripts.paths import preset_bytes, preset_label, preset_path
+from soundbench.scripts.models.mallorca_winds import load_config, render
 from soundbench.scripts.perform import TempoMap
 
 
@@ -39,16 +39,16 @@ def midi_controls(midi, index):
 
 def selected_config(settings, instrument):
     options = settings.get(f"{instrument}_model", {})
-    if set(options)-{"parameters", "output_gain"}:
-        raise ValueError(f"{instrument}_model accepts parameters and output_gain only")
-    path = parameters_path(options.get("parameters", f"instruments/models/{instrument}.toml"))
+    if set(options)-{"preset", "output_gain"}:
+        raise ValueError(f"{instrument}_model accepts preset and output_gain only")
+    path = preset_path(instrument, options.get("preset"))
     config = load_config(instrument, path)
     if "output_gain" in options:
         value = options["output_gain"]
         if not isinstance(value, (float, int)) or not np.isfinite(value) or not 0 < value <= 2:
             raise ValueError("output_gain must be finite and in (0,2]")
         config["output_gain"] = value
-    digest = hashlib.sha256(path.read_bytes()+json.dumps(options, sort_keys=True).encode()).hexdigest()
+    digest = hashlib.sha256(preset_bytes(path)+json.dumps(options, sort_keys=True).encode()).hexdigest()
     return config, path, digest, options
 
 
@@ -79,7 +79,7 @@ def main(instrument):
         write_wav(Path(job["output"]), audio, config["sample_rate"])
         peak = max(peak, float(np.max(np.abs(audio), initial=0)))
         stems[str(job["index"])] = dict(engine="model", model=instrument,
-            parameters=parameters_label(path), parameters_sha256=digest, overrides=options)
+            parameters=preset_label(path), parameters_sha256=digest, overrides=options)
         assignments[str(job["index"])] = dict(notes=rows, controls=controls)
     elapsed = time.perf_counter()-start
     metrics = dict(stems=stems, audio_seconds=seconds, render_seconds=elapsed, peak=peak,

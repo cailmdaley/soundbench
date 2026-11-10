@@ -113,8 +113,8 @@ class KitTests(unittest.TestCase):
         self.assertIn("drums", STEREO_INSTRUMENTS)
 
     def test_all_presets_forte_no_clipping(self):
-        for name in ("drums", "drums-open", "drums-rock-fitted"):
-            path = ROOT/f"instruments/models/{name}.toml"
+        for name in ("default", "open", "rock"):
+            path = ROOT/f"presets/drums/{name}.toml"
             c = load_config(path)
             for p in (36, 38, 42, 46, 60):
                 y = render([note(p, 127)], 5.4, c)

@@ -17,16 +17,17 @@ from scipy.optimize import minimize_scalar
 from scipy.signal import lfilter
 from soundbench.scripts.models.banjo import _render, _output_guard, _rich_coefficients
 from soundbench.scripts.models.string_loss import design_loss, PITCHES
+from soundbench.scripts.paths import data_path, preset_path, read_preset
 
 ROOT = Path(__file__).resolve().parents[2]
-CONFIG = ROOT / 'instruments/models/guitar-steel.toml'
+CONFIG = preset_path('guitar')
 TUNINGS = {'standard': [64, 59, 55, 50, 45, 40],
            'dadgad': [62, 57, 55, 50, 45, 38],
            'open-g': [62, 59, 55, 50, 43, 38]}
 
 
 def load_config(path=CONFIG):
-    c = tomllib.loads(Path(path).read_text())
+    c = read_preset(path)
     s = c['strings']
     s.pop('release_seconds', None)
     s.setdefault('release_hz', [80, 200, 500, 1200])
@@ -36,6 +37,7 @@ def load_config(path=CONFIG):
     s.setdefault('damping_glide_ms', 1.0)
     s.setdefault('refret_ms', 25.0)
     s.setdefault('refret_t60', .04)
+    s.setdefault('max_bend_semitones', 0.)
     c['excitation'].setdefault('slide_noise', .002)
     c['excitation'].setdefault('contact_ms', 1.5)
     c['excitation'].setdefault('restrike_keep', .5)
@@ -320,7 +322,7 @@ def note(on, off, pitch, velocity, string, token, sr=48000, owner=0, kind=0, har
 
 @lru_cache(maxsize=1)
 def stroke_profile():
-    return tomllib.loads((ROOT/'instruments/models/guitar-stroke.toml').read_text())
+    return tomllib.loads(data_path('guitar', 'stroke.toml').read_text())
 
 
 def strum(on, duration, pitches, config, velocity=90, direction='down', speed_ms=None,

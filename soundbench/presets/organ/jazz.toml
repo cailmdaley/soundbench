@@ -1,0 +1,7 @@
+inherits = "default"
+
+[drawbars]
+registration = "800000000"
+
+[percussion]
+enabled = true

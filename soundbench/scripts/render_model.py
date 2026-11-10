@@ -17,9 +17,9 @@ import wave
 import mido
 import numpy as np
 
-from soundbench.scripts.paths import parameters_label, parameters_path
+from soundbench.scripts.paths import preset_bytes, preset_label, preset_path
 from soundbench.scripts.instrumentation import aliases, matching_tracks
-from soundbench.scripts.models.banjo import CONFIG, assign_string, load_config, render
+from soundbench.scripts.models.banjo import assign_string, load_config, render
 from soundbench.scripts.perform import BarMap, TempoMap
 
 
@@ -307,16 +307,15 @@ def write_wav(path, audio, sr=48000):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("manifest", type=Path)
-    parser.add_argument("--config", type=Path, help="Banjo parameter TOML (overrides manifest selection)")
     args = parser.parse_args()
     data = json.loads(args.manifest.read_text())
     selection = data['settings'].get('banjo_model', {})
-    if set(selection) - {'output_gain', 'parameters', 'tuning'}:
-        raise ValueError('banjo_model accepts output_gain, parameters and tuning')
-    parameter_path = (args.config or parameters_path(selection.get('parameters', str(CONFIG))))
+    if set(selection) - {'output_gain', 'preset', 'tuning'}:
+        raise ValueError('banjo_model accepts output_gain, preset and tuning')
+    parameter_path = preset_path('banjo', selection.get('preset'))
     config = load_config(parameter_path)
-    parameter_name = parameters_label(parameter_path)
-    options = {k:v for k,v in selection.items() if k != 'parameters'}
+    parameter_name = preset_label(parameter_path)
+    options = {k:v for k,v in selection.items() if k != 'preset'}
     if "output_gain" in options:
         gain = float(options["output_gain"])
         if not math.isfinite(gain) or gain <= 0:
@@ -328,7 +327,7 @@ def main():
                 or any(type(p) is not int or not 21 <= p <= 84 for p in tuning)):
             raise ValueError('banjo tuning needs five MIDI open pitches, strings 1..5')
         config['strings']['open_midi'] = tuning
-    parameter_hash = hashlib.sha256(parameter_path.read_bytes() + (json.dumps(options, sort_keys=True).encode() if options else b"")).hexdigest()
+    parameter_hash = hashlib.sha256(preset_bytes(parameter_path) + (json.dumps(options, sort_keys=True).encode() if options else b"")).hexdigest()
     performed, score = mido.MidiFile(data["performed_midi"]), mido.MidiFile(data["score_midi"])
     indices = [job["index"] for job in data["jobs"]]
     events, seconds, assignment = schedule(performed, score, data["settings"], indices, config)

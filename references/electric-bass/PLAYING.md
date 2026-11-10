@@ -8,8 +8,7 @@ The model is a four-string electric bass, with explicit note lengths and no samp
 bass = { model = "electric-bass", gain_db = 0, pan = 0 }
 
 [electric_bass_model]
-preset = "flat"                       # or "round"
-# parameters = "instruments/models/electric-bass-warm.toml"
+preset = "round"                      # flatwounds by default; or "warm"
 ```
 
 ## Notes and gestures

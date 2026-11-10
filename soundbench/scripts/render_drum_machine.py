@@ -17,9 +17,9 @@ import wave
 import mido
 import numpy as np
 
-from soundbench.scripts.paths import parameters_label, parameters_path
+from soundbench.scripts.paths import preset_bytes, preset_label, preset_path
 from soundbench.scripts.machine_time import TIMING_KEYS
-from soundbench.scripts.models.drum_machine import ROOT, load_config, render, voice_of
+from soundbench.scripts.models.drum_machine import load_config, render, voice_of
 from soundbench.scripts.perform import BarMap, TempoMap
 
 ENGINE_OPTIONS = frozenset(("seed", "output_gain", "unit", "accent", "velocity", "toms"))
@@ -49,15 +49,14 @@ def gestures(midi, index):
 def selected_config(settings, machine):
     """The machine preset plus the sidecar's [<machine>_model] table; knobs merge into voices."""
     options = settings.get(f"{machine}_model", {})
-    unknown = set(options)-ENGINE_OPTIONS-TIMING_KEYS-{"parameters", "knobs", "rides"}
+    unknown = set(options)-ENGINE_OPTIONS-TIMING_KEYS-{"preset", "knobs", "rides"}
     if unknown:
         raise ValueError(f"unknown {machine}_model options: {sorted(unknown)}")
-    path = None
-    if "parameters" in options:
-        path = parameters_path(options["parameters"])
+    # The machine's default is its template; a preset merges over it.
+    path = preset_path(machine, options["preset"]) if options.get("preset", "default") != "default" else None
     overrides = {"engine": {k: options[k] for k in ENGINE_OPTIONS if k in options}, "voices": options.get("knobs", {})}
     c = load_config(machine, path, overrides)
-    digest = hashlib.sha256((path.read_bytes() if path else b"")+json.dumps(options, sort_keys=True).encode()).hexdigest()
+    digest = hashlib.sha256((preset_bytes(path) if path else b"")+json.dumps(options, sort_keys=True).encode()).hexdigest()
     return c, path, digest
 
 
@@ -124,7 +123,7 @@ def main():
         audio = render(rows, seconds, machine, c, bass=model == "tr808-bass")
         write_stereo_wav(Path(job["output"]), audio, c["engine"]["sample_rate"])
         index = str(job["index"])
-        stems[index] = dict(engine="model", model=model, parameters=parameters_label(path) if path else f"instruments/models/{machine}.toml",
+        stems[index] = dict(engine="model", model=model, parameters=preset_label(path or preset_path(machine)),
                             parameters_sha256=digest, overrides=data.get("settings", {}).get(f"{machine}_model", {}))
         played[index] = dict(notes=rows)
         peaks[index] = float(np.max(abs(audio), initial=0))

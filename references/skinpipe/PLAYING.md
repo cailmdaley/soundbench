@@ -10,7 +10,7 @@ skinpipe = { model = "skinpipe", gain_db = 0, pan = -0.1 }
 # Voice skinthumb inherits the unique skinpipe binding.
 
 [skinpipe_model]
-parameters = "instruments/models/skinpipe.toml"
+preset = "default"
 courses = [50, 57, 62, 66, 69]
 # output_gain = 0.1
 ```

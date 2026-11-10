@@ -29,7 +29,7 @@ soundbench = "soundbench.cli:main"
 include = ["soundbench*"]
 
 [tool.setuptools.package-data]
-soundbench = ["instruments/models/*.toml", "instruments/models/*.json", "instruments/models/*.md", "instruments/rooms/*.json", "instruments/rooms/*.md", "scripts/models/banjo_fit/*.md"]
+soundbench = ["presets/*.toml", "presets/*/*.toml", "presets/*/data/*", "rooms/*", "scripts/singing.toml", "scripts/models/banjo_fit/*.md"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -23,7 +23,11 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import optax
-from soundbench.scripts.models.banjo import load_config, render as engine_render, CONFIG
+from soundbench.scripts.models.banjo import load_config, render as engine_render
+from soundbench.scripts.paths import preset_path
+
+# A fit starts from the hand-set membrane design, not from an earlier fit.
+CONFIG = preset_path('banjo', 'membrane')
 from soundbench.scripts.models.banjo_fit import twin, loss, chain
 from soundbench.scripts.models.banjo_fit.audio import restore_scales
 
@@ -124,9 +128,9 @@ def main():
     parser.add_argument('--resume', type=Path, help='Start from parameters.json from a compatible fit')
     parser.add_argument('--allow-unverified-resume', action='store_true', help='Allow a seed without a saved configuration hash; not for report-only')
     parser.add_argument('--report-only', action='store_true', help='Regenerate diagnostics/export from --resume without optimization')
-    parser.add_argument('--export', type=Path, help='Destination TOML; defaults to OUT/export.toml')
+    parser.add_argument('--export', type=Path, help='Where to write the fitted preset; defaults to OUT/preset.toml')
     args = parser.parse_args()
-    args.export = args.export or args.out/'export.toml'
+    args.export = args.export or args.out/'preset.toml'
     if args.chain and (not args.native_mp3 or args.independent):
         parser.error('--chain requires --native-mp3 and a joint fit')
     if args.polarization_start and not args.two_stage:

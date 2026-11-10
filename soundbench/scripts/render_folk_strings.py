@@ -13,11 +13,11 @@ from pathlib import Path
 import time
 import mido
 import numpy as np
-from soundbench.scripts.paths import parameters_path
+from soundbench.scripts.paths import preset_bytes, preset_path
 from soundbench.scripts.instrumentation import matching_tracks
 from soundbench.scripts.perform import TempoMap
 from soundbench.scripts.models import guitar
-from soundbench.scripts.models.folk_strings import load_config, note, tremolo, render, SR, ROOT
+from soundbench.scripts.models.folk_strings import load_config, note, tremolo, render, SR
 from soundbench.scripts.models.guitar_release import finish
 from soundbench.scripts.render_model import write_wav, assignment_statistics
 
@@ -129,9 +129,9 @@ def main():
     if instrument not in ('mandolin','dobro'):
         raise ValueError('manifest suffix must be .mandolin.json or .dobro.json')
     options = data['settings'].get(f'{instrument}_model',{})
-    if set(options)-{'parameters','output_gain','bend_range','vibrato'}:
+    if set(options)-{'preset','output_gain','bend_range','vibrato'}:
         raise ValueError('unknown model options')
-    path = parameters_path(options.get('parameters',f'instruments/models/{instrument}.toml'))
+    path = preset_path(instrument,options.get('preset'))
     c = load_config(instrument,path)
     if 'output_gain' in options:
         gain = float(options['output_gain'])
@@ -149,7 +149,7 @@ def main():
     for owner,job in enumerate(data['jobs']):
         write_wav(Path(job['output']),audio[owner])
         stems[str(job['index'])] = dict(engine='model',model=instrument,preset=instrument,parameters=str(path),
-            parameters_sha256=hashlib.sha256(path.read_bytes()+json.dumps(options,sort_keys=True).encode()).hexdigest(),overrides=options)
+            parameters_sha256=hashlib.sha256(preset_bytes(path)+json.dumps(options,sort_keys=True).encode()).hexdigest(),overrides=options)
     metrics = dict(stems=stems,audio_seconds=seconds,render_seconds=elapsed,assignment=assignment,
         peak=float(np.max(abs(audio),initial=0)),assignment_statistics=assignment_statistics(events))
     args.manifest.with_suffix('.metrics.json').write_text(json.dumps(metrics,indent=2)+'\n')

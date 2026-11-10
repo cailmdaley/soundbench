@@ -3,11 +3,11 @@
 # requires-python = ">=3.12"
 # dependencies = ["mido>=1.3,<2", "numpy>=1.26", "numba>=0.61", "scipy>=1.11", "cmudict>=1.0"]
 # ///
-"""Render CHIMERA from the studio's score/performed-MIDI manifest.
+"""Render CHIMERA from a score/performed-MIDI manifest.
 
-The voice3 lyric alignment and score marks are shared, not reinterpreted by
-CHIMERA's text front end. --prepare-only writes native inputs without rendering.
-This experimental adapter does not replace voice3 or any album master.
+The words, parts and marks come from the [singing] block (scripts/singing.py),
+not CHIMERA's own text front end. --prepare-only writes native inputs without
+rendering.
 """
 from __future__ import annotations
 
@@ -23,10 +23,11 @@ import numpy as np
 from scipy.io import wavfile
 
 from soundbench.scripts.instrumentation import matching_tracks
-from soundbench.scripts.models import phonetics, voice3
+from soundbench.scripts.models import phonetics
 from soundbench.scripts.perform import TempoMap
-from soundbench.scripts.render_voice3 import (aligned_lyrics, apply_marks, borrow, controls_for, default_singers,
-                           marks_for, score_rows, settings_for, track_syllables)
+from soundbench.scripts.singing import (aligned_lyrics, apply_marks, borrow, character_settings, controls_for,
+                                        default_singers, marks_for, score_rows, settings_for, singer_range,
+                                        track_syllables)
 
 # The engine's source fork sits at the repository root, beside the package.
 fork = Path(__file__).resolve().parents[2] / "vendor/chimera"
@@ -142,33 +143,26 @@ def timeline(rows, body, seconds, *, baseline=False, part=None, controls=(), see
                       breathiness=part.get("breathiness", 1.0), vibrato_scale=part.get("vibrato", 1.0),
                       midi_controls=sorted(controls, key=lambda c: c["time"]),
                       expression=[{"time": r["time"], "off": r["off"], "velocity": r["velocity"],
-                                   "intent": {k: v for k, v in r.get("intent", voice3.character_settings(part.get("character", "plain"))).items() if k != "base"},
+                                   "intent": {k: v for k, v in r.get("intent", character_settings(part.get("character", "plain"))).items() if k != "base"},
                                    "emerging_progress": r.get("emerging_progress", 0.0),
                                    "marked_onset": r.get("marked_onset", False),
                                    "marked_release": r.get("marked_release", False)} for r in rows])
     return native
 
 
-def check_supported(options, part, rows, singer):
-    """Reject voice3-only effects rather than silently swallowing their intent."""
-    unsupported = set(part) & {"machine", "timing_sd_s", "scatter", "spread"}
-    if "spread" in options:
-        unsupported.add("voice3.spread")
-    if unsupported:
-        raise ValueError(f"CHIMERA one-singer native mode does not support {sorted(unsupported)}")
-    if singer == "machine":
-        raise ValueError("CHIMERA needs a physical singer, not singer='machine'")
+def check_supported(part, rows, singer):
+    """Reject intents CHIMERA cannot realise rather than silently swallowing them."""
     for r in rows:
         if r["intent"]["vowel_opening_hz"] != 0:
             raise ValueError("CHIMERA does not support nonzero vowel_opening_hz (no calibrated Hz-to-jaw mapping)")
-    lo, hi = part.get("range", voice3._table()["singers"][singer]["range"])
+    lo, hi = part.get("range", singer_range(singer))
     if any(not lo <= r["pitch"] <= hi for r in rows):
-        raise ValueError(f"CHIMERA {singer} note outside range {lo}..{hi}; set voice3.parts range explicitly")
+        raise ValueError(f"CHIMERA {singer} note outside range {lo}..{hi}; set the part's range explicitly")
 
 
 def prepare(data, *, baseline=False):
     settings = data.get("settings", {})
-    seed, lexicon, parts, _ = settings_for(settings)
+    seed, lexicon, parts = settings_for(settings)
     performed, score = mido.MidiFile(data["performed_midi"]), mido.MidiFile(data["score_midi"])
     tempo = TempoMap(performed)
     tracks = [i for i, t in enumerate(performed.tracks) if any(m.type == "note_on" and m.velocity for m in t)]
@@ -189,14 +183,12 @@ def prepare(data, *, baseline=False):
             raise ValueError("chimera parts take aspiration and frication, each in (0, 10]")
         noise[matches[0]] = options
     seconds = tempo.seconds_at(max(sum(m.time for m in t) for t in performed.tracks)) + 1.0
-    marked = {} if baseline else marks_for(settings.get("voice3", {}).get("marks", []), score,
+    marked = {} if baseline else marks_for(settings.get("singing", {}).get("marks", []), score,
                                            {job["index"]: names[job["index"]] for job in data["jobs"]})
     result = []
     for job in data["jobs"]:
         index = job["index"]
         part = by_index.get(index, {})
-        if part.get("machine"):
-            raise ValueError("CHIMERA comparison requires a physical sung part, not a machine effect")
         rows = score_rows(performed, score, index)
         source = index
         if "lyrics_from" in part:
@@ -220,7 +212,7 @@ def prepare(data, *, baseline=False):
         if len(singers) != 1:
             raise ValueError("CHIMERA renders exactly one singer per part; sections are unsupported")
         if not baseline:
-            check_supported(settings.get("voice3", {}), part, rows, singers[0])
+            check_supported(part, rows, singers[0])
         body = "female" if singers[0] in ("alto", "soprano") else "male"
         part_seed = int(np.random.SeedSequence([seed, index]).generate_state(1)[0])
         native = timeline(rows, body, seconds, baseline=baseline, part=part, singer=singers[0], lexicon=lexicon,

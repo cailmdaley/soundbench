@@ -20,6 +20,9 @@ from scipy.signal import butter, sosfiltfilt, hilbert
 ROOT = Path(__file__).resolve().parents[1] / "soundbench"
 sys.path.insert(0, str(ROOT/'scripts'))
 from soundbench.scripts.models.banjo import load_config, _render, modal_coefficients, render as numba_render
+from soundbench.scripts.paths import preset_path
+
+CONFIG = preset_path('banjo', 'membrane')
 from soundbench.scripts.models.banjo_fit import twin, loss, chain
 from soundbench.scripts.models.banjo_fit.audio import load as load_audio, restore_scales
 from soundbench.scripts.audio_pitch import pitch_cents
@@ -27,7 +30,7 @@ from soundbench.scripts.audio_pitch import pitch_cents
 
 class FitTests(unittest.TestCase):
     def test_string_impulse_pitch_and_partial_t60_match_numba(self):
-        config = load_config()
+        config = load_config(CONFIG)
         sr = 48000
         samples = 72000
         for string in range(5):
@@ -65,7 +68,7 @@ class FitTests(unittest.TestCase):
             print(f'string {string+1}: pitch difference {cents:.4f} cents; max partial T60 difference {max(errors)*100:.3f}%')
 
     def test_constraints_and_gradients(self):
-        config = load_config()
+        config = load_config(CONFIG)
         notes = [dict(string=1, pitch=62, frequency=293.664768)]
         p, base = twin.initial_parameters(config, notes, 8)
         q = twin.physical(p, base, config)
@@ -92,7 +95,7 @@ class FitTests(unittest.TestCase):
         h = np.asarray(twin.fir_loss(jnp.array(rates), 195.))
         expected = design_loss(twin.KNOTS, rates, 195.)
         np.testing.assert_allclose(h, expected, atol=2e-5)
-        config = load_config()
+        config = load_config(CONFIG)
         config['strings'].update(decay_hz=twin.KNOTS.tolist(), decay_t60=(np.log(1000)/np.tile(rates, (5, 1))).tolist())
         bank = loss_bank(config['strings'])
         pitch = 55.17
@@ -107,7 +110,7 @@ class FitTests(unittest.TestCase):
         np.testing.assert_allclose(actual, expected, atol=2e-4)
 
     def test_deployable_audio_parity_and_note_specific_nuisance_invariance(self):
-        config = load_config()
+        config = load_config(CONFIG)
         config['pickups'] = dict(head=0., string=1.)
         config['bridge'] = dict(coupling=0., head_feedback=0.)
         config['excitation'].update(position_jitter=0., exponential_pick=1, velocity_corner_exponent=0.)
@@ -129,7 +132,7 @@ class FitTests(unittest.TestCase):
         np.testing.assert_array_equal(predicted, clean)
 
     def test_second_polarization_comb_boundary_matches_engine(self):
-        config=load_config()
+        config=load_config(CONFIG)
         f0=440*2**((62-69)/12)
         config['pickups']=dict(head=0.,string=1.)
         config['bridge']=dict(coupling=0.,head_feedback=0.)
@@ -151,7 +154,7 @@ class FitTests(unittest.TestCase):
         np.testing.assert_allclose(actual,predicted,atol=2e-5)
 
     def test_recording_latents_cannot_change_the_dry_twin(self):
-        config=load_config()
+        config=load_config(CONFIG)
         notes=[dict(string=1,pitch=62,frequency=293.664768)]
         p,base=twin.initial_parameters(config,notes,8)
         p.update(chain.initial_parameters())
@@ -161,7 +164,7 @@ class FitTests(unittest.TestCase):
         np.testing.assert_array_equal(expected,actual)
 
     def test_shared_excitation_canonicalization_preserves_audio_and_releases_clipped_latents(self):
-        config = load_config()
+        config = load_config(CONFIG)
         notes = [dict(string=1,pitch=p,frequency=440*2**((p-69)/12)) for p in (62,71)]
         p, base = twin.initial_parameters(config, notes, 8)
         p['width'] = jnp.array([-4.,4.])
@@ -221,7 +224,7 @@ class FitTests(unittest.TestCase):
         self.assertAlmostEqual(float(np.sqrt(np.mean(audio**2))), .05, places=5)
 
     def test_head_gain_initialization_uses_engine_normalization(self):
-        config = load_config()
+        config = load_config(CONFIG)
         changed = copy.deepcopy(config)
         changed['head']['weights'] = [3*x for x in config['head']['weights']]
         notes = [dict(string=1, pitch=62, frequency=293.664768)]
@@ -231,7 +234,7 @@ class FitTests(unittest.TestCase):
         np.testing.assert_allclose(original['mode_gain'], scaled['mode_gain'])
 
     def test_exported_preset_fortissimo_headroom(self):
-        config = load_config(ROOT/'instruments/models/banjo-gut.toml')
+        config = load_config(preset_path('banjo'))
         for pitches in (config['strings']['open_midi'], [67]*5):
             rows = [[0, 0, s, 0, pitch, 127, 0, 0, 0, 0, s] for s, pitch in enumerate(pitches)]
             y = numba_render(rows, 1.5, config=config)

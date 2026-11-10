@@ -1,0 +1,19 @@
+inherits = "default"
+
+[engine]
+output_gain = 0.62
+
+[drawbars]
+registration = "006080300"
+
+[tonewheels]
+leakage = 0
+
+[contacts]
+click_gain = 0
+
+[preamp]
+drive = 0.15
+
+[leslie]
+enabled = false

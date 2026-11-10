@@ -250,10 +250,6 @@ def serialize_preset(config, path):
         for key, value in config[table].items():
             if isinstance(value, dict):
                 continue
-            if table == 'engine' and key.endswith('_data'):
-                # Shared model data lives alongside the preset, not in the output folder.
-                data_path = Path(value) if Path(value).is_absolute() else CONFIG.parent/value
-                value = os.path.relpath(data_path.resolve(), path.parent.resolve())
             lines.append(f'{key} = {json.dumps(value)}')
         for key, values in config[table].items():
             if isinstance(values, dict):

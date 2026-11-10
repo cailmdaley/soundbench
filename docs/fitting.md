@@ -35,7 +35,9 @@ Use several registers and reserve notes/seeds for validation rather than fitting
 uv run soundbench fit-banjo --notes notes.json --out build/my-fit --steps 200
 ```
 
-The fitter writes the aligned inputs, optimization metrics, parameter export, source hashes and diagnostic report under the output directory.
+The fitter writes the aligned inputs, optimization metrics, source hashes and diagnostic report under the output directory, and the fitted preset as `preset.toml`.
+Play it with `uv run soundbench play banjo --preset build/my-fit/preset.toml --out build/my-fit.wav`.
+A fit starts from the banjo's hand-set `membrane` preset.
 For a native-MP3 recording-chain fit, read `--chain`, `--native-mp3` and the stage-ablation options in the help.
 For a runtime-aligned fit, inspect `--deployable` and the report's export limitations.
 No external reference recording is fetched by the fit command.
@@ -53,4 +55,4 @@ Piano calibration utilities are under `soundbench.scripts.models.piano_fit` and 
 Record a source's creator, licence, URL, checksum, analysis windows and any assumed fingering.
 Keep those with every exported parameter set.
 Source audio, aligned crops and figures derived from it are local outputs, not automatically redistributable artifacts.
-See the adjacent parameter provenance records before publishing a fit.
+See `soundbench/presets/PROVENANCE.toml` before publishing a fit.

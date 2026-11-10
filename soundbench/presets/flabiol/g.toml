@@ -1,0 +1,4 @@
+# Constructed G-relative just scale; native flute acoustic calibration.
+inherits = "default"
+
+tuning_cents = [-1.96, 0.0, 1.96, 0.0, -15.64, 0.0, -11.73, 0.0, 0.0, 3.91, 0.0, -13.69]

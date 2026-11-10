@@ -9,11 +9,11 @@ No sampled audio, generated notes, or per-note phase-reset oscillators.
 from __future__ import annotations
 import math
 from pathlib import Path
-import tomllib
 import numpy as np
 from numba import njit
 from scipy.signal import butter, sosfilt, sosfiltfilt, lfilter
 from .note_random import wind_noise
+from soundbench.scripts.paths import preset_path, read_preset
 
 ROOT = Path(__file__).resolve().parents[2]
 # Raw-reed and breath controls that piece-scoped presets inherit unless they
@@ -28,7 +28,7 @@ WIND_RANGES = {"reed_turbulence": (0, .6), "tremor_cents": (0, 10), "repeat_cut_
 def load_config(instrument="flabiol", path=None):
     if instrument not in ("flabiol", "xeremia"):
         raise ValueError("instrument must be flabiol or xeremia")
-    c = tomllib.loads(Path(path or ROOT / f"instruments/models/{instrument}.toml").read_text())
+    c = read_preset(path or preset_path(instrument))
     required = {"sample_rate", "seed", "output_gain", "lowpass_hz", "noise", "loss_pole",
                 "jet_ratio", "pressure", "attack_s", "release_s", "tail_seconds",
                 "vibrato_cents", "vibrato_hz", "wobble_cents", "drone_gain", "drone_pitch",

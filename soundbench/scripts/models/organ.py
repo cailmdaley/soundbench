@@ -8,8 +8,9 @@ import numpy as np
 from numba import njit
 from scipy.signal import butter, sosfilt, lfilter
 from .keys_common import SR, ROOT, load_config as _load, validate, curve, smooth, finish
+from soundbench.scripts.paths import preset_path
 
-CONFIG = ROOT/'instruments/models/organ.toml'
+CONFIG = preset_path('organ')
 GEARS = np.array([(85,104),(71,82),(67,73),(35,36),(69,67),(12,11),
                   (37,32),(49,40),(48,37),(11,8),(67,46),(54,35)], float)
 OFFSETS = (-12, 7, 0, 12, 19, 24, 28, 31, 36)

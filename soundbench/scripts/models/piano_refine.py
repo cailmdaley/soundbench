@@ -8,13 +8,13 @@
 Residuals subtract narrowband, time-varying sinusoidal partial reconstructions.
 They are observations for a stochastic body filter bank, never runtime audio.
 """
-from pathlib import Path
 from functools import lru_cache
 import argparse
 import json
 import numpy as np
 from scipy.signal import find_peaks, stft, butter, sosfreqz, sosfiltfilt
 from scipy.optimize import nnls
+from soundbench.scripts.paths import data_path
 if __package__:
     from .piano_fit import ROOT, LAYERS, MODES, source_map, load
 else:
@@ -146,7 +146,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--body-only',action='store_true')
     args=parser.parse_args()
-    base=json.loads((ROOT/'instruments/models/piano-modal.json').read_text())
+    base=json.loads(data_path('piano', 'modal.json').read_text())
     observations=np.load(ROOT/'build/piano-fit/observations.npz')
     obs=observations['observed']; t=observations['times']
     rows=source_map(); profiles=[]; bodies=[]; diagnostics=[]
@@ -191,10 +191,10 @@ def main():
                          'late_rate':rates,'prompt_rate':prompt,'slow_amp':amps,'prompt_amp':gains})
         bodies.append({'pitch':pitch,'rms':body,'knock':knocks})
         print('fit',pitch,'mistuning',round(cents,3),'spacings',resolved,flush=True)
-    target=ROOT/'instruments/models'
+    target=data_path('piano', '')
     if not args.body_only:
-        (target/'piano-coupled.json').write_text(json.dumps({'schema':1,'velocities':LAYERS,'profiles':profiles},separators=(',',':'))+'\n')
-    (target/'piano-body.json').write_text(json.dumps({'schema':1,'source':base['source'],'velocities':LAYERS,'times':TIMES.tolist(),'band_edges':EDGES.tolist(),'profiles':bodies},separators=(',',':'))+'\n')
+        (target/'coupled.json').write_text(json.dumps({'schema':1,'velocities':LAYERS,'profiles':profiles},separators=(',',':'))+'\n')
+    (target/'body.json').write_text(json.dumps({'schema':1,'source':base['source'],'velocities':LAYERS,'times':TIMES.tolist(),'band_edges':EDGES.tolist(),'profiles':bodies},separators=(',',':'))+'\n')
     (ROOT/'references/piano/residual-fit.json').write_text(json.dumps(diagnostics,indent=2)+'\n')
 
 if __name__=='__main__': main()

@@ -122,7 +122,7 @@ def pronunciations(word, lexicon=None):
             stem = cmudict().get(word[:-len(suffix)]) or cmudict().get(word[:-len(suffix)] + "e")
             if stem:
                 return [[*stem[0], *_ending(suffix, stem[0][-1])]]
-    raise ValueError(f"no pronunciation for {word!r}: add it to the piece's [voice3.lexicon] as "
+    raise ValueError(f"no pronunciation for {word!r}: add it to the piece's [singing.lexicon] as "
                      "ARPAbet with stress digits, as CMUdict writes them (wayfaring = \"W EY1 F EH2 R IH0 NG\")")
 
 

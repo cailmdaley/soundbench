@@ -5,11 +5,11 @@ This supplies control gestures, not an independent pitched sound source.
 """
 from functools import lru_cache
 import json
-from pathlib import Path
 import numpy as np
 from scipy.signal import periodogram
+from soundbench.scripts.paths import data_path
 
-CALIBRATION = Path(__file__).resolve().parents[2]/'instruments/models/fiddle-player.json'
+CALIBRATION = data_path('fiddle', 'player.json')
 
 
 @lru_cache(maxsize=1)

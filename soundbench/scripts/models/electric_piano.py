@@ -8,8 +8,9 @@ import numpy as np
 from scipy.signal import resample_poly, butter, sosfilt
 from .keys_common import SR, ROOT, load_config as _load, validate, curve, smooth, finish
 from .piano import hammer_force
+from soundbench.scripts.paths import preset_path
 
-CONFIG = ROOT/'instruments/models/electric-piano.toml'
+CONFIG = preset_path('electric-piano')
 RATIOS = np.array([1., 1.0012, 6.267, 17.55])
 
 

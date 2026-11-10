@@ -14,12 +14,8 @@ ROOT = Path(__file__).resolve().parents[1]
 # model name -> (renderer, manifest suffix)
 RENDERERS = {
     "banjo": (ROOT / "scripts/render_model.py", "models"),
-    "voice": (ROOT / "scripts/render_voice.py", "voice"),
     "fiddle": (ROOT / "scripts/render_fiddle.py", "fiddle"),
-    "voice2": (ROOT / "scripts/render_voice2.py", "voice2"),
-    "voice3": (ROOT / "scripts/render_voice3.py", "voice3"),
     "chimera": (ROOT / "scripts/render_chimera.py", "chimera"),
-    "machine-voice": (ROOT / "scripts/render_machine_voice.py", "machine-voice"),
     "flabiol": (ROOT / "scripts/render_flabiol.py", "flabiol"),
     "xeremia": (ROOT / "scripts/render_xeremia.py", "xeremia"),
     "skinpipe": (ROOT / "scripts/render_skinpipe.py", "skinpipe"),
@@ -41,6 +37,8 @@ RENDERERS = {
     "tr909": (ROOT / "scripts/render_drum_machine.py", "tr909"),
     "linn": (ROOT / "scripts/render_drum_machine.py", "linn"),
 }
+# Models that sing a [singing] block; its marks are routed to each by part.
+SINGERS = {"chimera"}
 
 
 def renderer_command(renderer):
@@ -51,35 +49,19 @@ def renderer_command(renderer):
     return [sys.executable, "-m", "soundbench.scripts." + renderer.stem]
 
 
-def model_articulations(settings, bindings, names, model):
-    """The sidecar's articulations whose track is bound to `model`.
-
-    Integer selectors are 1-based ordinals over the bound note tracks in MIDI order.
-    """
-    from soundbench.scripts.instrumentation import matching_tracks
-    selected = []
-    for art in settings.get("articulation", []):
-        matches = matching_tracks(art.get("track"), sorted(bindings), names)
-        if len(matches) != 1:
-            raise ValueError("articulation must select one bound note track")
-        if bindings[matches[0]].model == model:
-            selected.append(art)
-    return selected
-
-
 def vocal_marks(marks, bindings, names, model):
     """Route shared score marks to their selected singer model, without mutation.
 
-    A mark's part is matched among the sung parts only (voice3 and chimera, in
-    track order), so a numeric part counts singers, as it does in voice3.
+    A mark's part is matched among the sung parts only (every SINGERS model, in
+    track order), so a numeric part counts singers.
     """
     from soundbench.scripts.instrumentation import matching_tracks
-    sung = [i for i in sorted(bindings) if bindings[i].model in ("voice3", "chimera")]
+    sung = [i for i in sorted(bindings) if bindings[i].model in SINGERS]
     selected = []
     for mark in marks:
         matches = matching_tracks(mark["part"], sung, names)
         if len(matches) != 1:
-            raise ValueError("voice3 mark part must select one voice3 or chimera part")
+            raise ValueError("a singing mark's part must select one sung part")
         if bindings[matches[0]].model == model:
             model_tracks = [i for i in sorted(bindings) if bindings[i].model == model]
             selected.append({**mark, "part": str(model_tracks.index(matches[0]) + 1)})
@@ -101,13 +83,10 @@ def render_model_stems(performed_midi, score_midi, settings, bindings, output_di
         renderer, suffix = RENDERERS[model]
         manifest = output_dir / f"{piece}.{suffix}.json"
         model_settings = settings
-        if "voice2" in jobs and settings.get("articulation"):
+        if model in SINGERS and settings.get("singing", {}).get("marks"):
             names = {i: tracks[i].name for i in bindings}
-            model_settings = {**settings, "articulation": model_articulations(settings, bindings, names, model)}
-        if model in ("voice3", "chimera") and settings.get("voice3", {}).get("marks"):
-            names = {i: tracks[i].name for i in bindings}
-            model_settings = {**model_settings, "voice3": {**settings["voice3"],
-                "marks": vocal_marks(settings["voice3"]["marks"], bindings, names, model)}}
+            model_settings = {**model_settings, "singing": {**settings["singing"],
+                "marks": vocal_marks(settings["singing"]["marks"], bindings, names, model)}}
         manifest.write_text(json.dumps({"performed_midi": str(performed_midi),
                                         "score_midi": str(score_midi), "settings": model_settings,
                                         "jobs": model_jobs}, indent=2) + "\n")

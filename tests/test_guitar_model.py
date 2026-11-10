@@ -27,7 +27,7 @@ from guitar_studies import steel_demo, nylon_demo
 class GuitarTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.configs = [load_config(ROOT/f'instruments/models/guitar-{p}.toml') for p in ('steel', 'nylon')]
+        cls.configs = [load_config(ROOT/f'presets/guitar/{p}.toml') for p in ('default', 'nylon')]
 
     def test_tuning_all_strings_and_registers(self):
         errors = []
@@ -134,7 +134,7 @@ class GuitarTests(unittest.TestCase):
         settings = {'instruments': {'guitar': {'model': 'guitar'}},
                     'guitar_articulation': [dict(track='guitar', bar=1, kind='rasgueado')]}
         self.assertEqual(resolve_instruments(midi, settings)[0].model, 'guitar')
-        events, seconds, assignment = schedule(midi, midi, settings, [0], self.configs[1], 'nylon')
+        events, seconds, assignment = schedule(midi, midi, settings, [0], self.configs[1])
         self.assertEqual(sum(r[1] == 0 for r in events), 9)
         self.assertEqual(len(assignment), 3)
         self.assertGreater(seconds, .5)
@@ -146,7 +146,7 @@ class GuitarTests(unittest.TestCase):
             d = Path(directory)
             midi = d/'guitar.mid'
             self.fixture().save(midi)
-            for preset in ('steel', 'nylon'):
+            for preset in ('default', 'nylon'):
                 manifest = d/f'{preset}.json'
                 output = d/f'{preset}.wav'
                 manifest.write_text(json.dumps(dict(performed_midi=str(midi), score_midi=str(midi),
@@ -155,7 +155,7 @@ class GuitarTests(unittest.TestCase):
                 self.assertTrue(output.exists())
                 metrics = json.loads(manifest.with_suffix('.metrics.json').read_text())
                 self.assertEqual(metrics['stems']['0']['model'], 'guitar')
-                self.assertEqual(metrics['stems']['0']['preset'], preset)
+                self.assertEqual(metrics['stems']['0']['parameters'], str(ROOT/f'presets/guitar/{preset}.toml'))
                 self.assertLess(metrics['peak'], 1)
 
     def test_legato_validation_and_nylon_bend_rejection(self):
@@ -166,7 +166,7 @@ class GuitarTests(unittest.TestCase):
             schedule(midi,midi,settings,[0],self.configs[0])
         settings['guitar_articulation'][0] = dict(track='guitar',bar=1,kind='bend',to=.5,duration_beats=.25)
         with self.assertRaises(ValueError):
-            schedule(midi,midi,settings,[0],self.configs[1],'nylon')
+            schedule(midi,midi,settings,[0],self.configs[1])
 
     def test_stale_release_does_not_kill_destination(self):
         for c in self.configs:

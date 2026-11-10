@@ -24,8 +24,8 @@ class BassTests(unittest.TestCase):
         cls.c['excitation']['intonation_cents'] = 0
 
     def test_tuning(self):
-        for preset in ('gut','steel'):
-            c = load_config(ROOT/f'instruments/models/bass-{preset}.toml')
+        for preset in ('default','steel'):
+            c = load_config(ROOT/f'presets/bass/{preset}.toml')
             c['excitation']['intonation_cents'] = 0
             for p in (28,33,38,43,48,55,64):
                 s = assign_string(p,c)+1
@@ -37,8 +37,8 @@ class BassTests(unittest.TestCase):
                 self.assertLess(abs(1200*np.log2(est/f0)),3.,(preset,p,est))
 
     def test_finite_and_no_clipping(self):
-        for preset in ('gut','steel'):
-            c = load_config(ROOT/f'instruments/models/bass-{preset}.toml')
+        for preset in ('default','steel'):
+            c = load_config(ROOT/f'presets/bass/{preset}.toml')
             for kind in ('pizz','slap','slap-back','dead','ghost'):
                 ev = sum((note(0,.8,p,127,s+1,s,kind=kind) for s,p in enumerate(c['strings']['open_midi'])),[])
                 y = render(ev,2,config=c)

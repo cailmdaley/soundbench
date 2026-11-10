@@ -4,12 +4,10 @@
 [instruments]
 ximbomba = { model = "ximbomba", gain_db = 3, pan = 0 }
 
-[ximbomba_model]
-parameters = "instruments/models/ximbomba-fitted.toml"
 ```
 
-`ximbomba-fitted.toml` is a preset fitted to a recording of a Mallorcan ximbomba playing alone.
-Omit `parameters` for the physical prior, or select `instruments/models/ximbomba-austria.toml` for an alternative fit to an Austrian friction drum, whose hand lifts off between strokes.
+The default preset is fitted to a recording of a Mallorcan ximbomba playing alone.
+`preset = "austria"` under `[ximbomba_model]` selects a fit to an Austrian friction drum, whose hand lifts off between strokes.
 Use one named pitched MIDI Voice, not a GM drum map.
 No keyswitches, pitch bends, CC64 sustain or track-name articulation suffixes are used.
 
@@ -28,7 +26,7 @@ The two directions use different hand speed, profile skew and grip; they aren't 
 Velocity 1–127 sets radiated intensity continuously; it does not change hand speed or the friction regime.
 Velocity 55–95 and durations 0.25–0.75 s are useful for beat strokes.
 The MIDI onset means **turn the hand**: with the fitted preset the hand reverses in 91 ms (the prior: 60 ms), scraping as it sticks and breaks away, then eases from full speed to 43% of it (the prior: 70%) by the next turn while keeping its grip.
-With `ximbomba-austria.toml` the hand instead digs in (speed peaks 15% of the way through, `stroke_peak`), fades toward note-off and lets go, so its strokes stay separate.
+With the `austria` preset the hand instead digs in (speed peaks 15% of the way through, `stroke_peak`), fades toward note-off and lets go, so its strokes stay separate.
 All notes require explicit releases; do not tie across rests.
 A stroke that starts before the previous one ends takes the hand over at its onset.
 

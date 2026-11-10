@@ -9,6 +9,7 @@ import copy
 import numpy as np
 from scipy.signal import lfilter
 from soundbench.scripts.models import guitar
+from soundbench.scripts.paths import preset_path
 
 ROOT = guitar.ROOT
 SR = 48000
@@ -17,7 +18,7 @@ SR = 48000
 def load_config(instrument, path=None):
     if instrument not in ('mandolin', 'dobro'):
         raise ValueError('instrument is mandolin or dobro')
-    c = guitar.load_config(path or ROOT/f'instruments/models/{instrument}.toml')
+    c = guitar.load_config(path or preset_path(instrument))
     if len(c['strings']['open_midi']) != (4 if instrument == 'mandolin' else 6):
         raise ValueError('wrong string count for preset')
     return c

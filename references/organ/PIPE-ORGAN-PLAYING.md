@@ -1,6 +1,6 @@
 # Pipe organ: what a score should do
 
-`model = "pipe-organ"` is a sample-free church organ (`soundbench/scripts/models/pipe_organ.py`, presets in `soundbench/instruments/models/pipe-organ.toml`). The Hammond-style `organ` is a different instrument.
+`model = "pipe-organ"` is a sample-free church organ (`soundbench/scripts/models/pipe_organ.py`, registrations in `soundbench/presets/pipe-organ/default.toml`). The Hammond-style `organ` is a different instrument.
 
 ## Sidecar
 

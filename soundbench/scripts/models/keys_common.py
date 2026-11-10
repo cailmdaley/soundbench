@@ -1,16 +1,16 @@
 """Validation and sample-accurate controls shared by the two keyboard engines."""
 import math
-import tomllib
 from pathlib import Path
 import numpy as np
 from scipy.signal import butter, sosfilt
+from soundbench.scripts.paths import preset_path, read_preset
 
 ROOT = Path(__file__).resolve().parents[2]
 SR = 48000
 
 
 def load_config(name, path=None):
-    cfg = tomllib.loads(Path(path or ROOT/f'instruments/models/{name}.toml').read_text())
+    cfg = read_preset(path or preset_path(name))
     if cfg['engine']['sample_rate'] != SR:
         raise ValueError('keyboards require 48 kHz')
     for table in cfg.values():

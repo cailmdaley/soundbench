@@ -6,12 +6,12 @@ Bind any stable LilyPond Voice/Staff track name in the performance sidecar:
 [instruments]
 flabiol = { model = "flabiol", gain_db = 0, pan = -0.2 }
 xeremia = { model = "xeremia", gain_db = 0, pan = 0.2 }
-# Optional parameter file / static gain overrides:
+# Optional preset (default, d, g, or a file of your own) and static gain:
 [flabiol_model]
-parameters = "instruments/models/flabiol.toml"
+preset = "d"
 output_gain = 0.37
 [xeremia_model]
-parameters = "instruments/models/xeremia.toml"
+preset = "g"
 ```
 
 **Write sounding pitch; no keyswitches and no automatic transposition.**

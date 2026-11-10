@@ -1,0 +1,8 @@
+# Modern fiddle: the fitted violin body as recorded close up (Philharmonia).
+inherits = "default"
+
+[engine]
+output_gain = 0.069032
+
+[body]
+tilt_db_per_octave = 0.0

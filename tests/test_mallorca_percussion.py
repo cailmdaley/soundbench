@@ -30,7 +30,7 @@ def note(pitch, velocity=80, off=.3, time=.05):
     return dict(time=time, off=off, pitch=pitch, velocity=velocity)
 
 
-XIMBOMBAS = ("ximbomba", "ximbomba-fitted", "ximbomba-austria")
+XIMBOMBAS = ("default", "austria")
 
 
 class PercussionTests(unittest.TestCase):
@@ -146,7 +146,7 @@ class PercussionTests(unittest.TestCase):
     def test_friction_drum_modes_load_the_head(self):
         from soundbench.scripts.models.mallorca_percussion import friction_drum_modes
         for name in XIMBOMBAS:
-            b = load_config("ximbomba", ROOT/f"instruments/models/{name}.toml")["body"]
+            b = load_config("ximbomba", ROOT/f"presets/ximbomba/{name}.toml")["body"]
             m, k, damping, volume, drive, hz = friction_drum_modes(b)
             n = b["modes"]
             self.assertAlmostEqual(hz[0], b["fundamental_hz"], delta=.01)
@@ -180,7 +180,7 @@ class PercussionTests(unittest.TestCase):
         # A friction drum speaks as a pitched groan; a train of separate slip
         # clicks is the crackle this engine replaced.
         for filename in XIMBOMBAS:
-            c = load_config("ximbomba", ROOT/f"instruments/models/{filename}.toml")
+            c = load_config("ximbomba", ROOT/f"presets/ximbomba/{filename}.toml")
             y, d = ximbomba_stroke(note(48, off=.7, time=.05), c, diagnostics=True)
             held = round(.65*48000)
             expected, grips = hand_profile(c["body"], .65, 48000)
@@ -235,7 +235,7 @@ class PercussionTests(unittest.TestCase):
         self.assertEqual(len(ximbomba_chains([short, note(48, off=1., time=.8)])), 2)
 
     def test_older_ximbomba_presets_keep_loading(self):
-        old = (ROOT/"instruments/models/ximbomba-austria.toml").read_text()
+        old = (ROOT/"presets/ximbomba/austria.toml").read_text()
         old = "\n".join(line for line in old.splitlines() if not line.startswith(("pot_", "stroke_peak")))
         with tempfile.TemporaryDirectory() as d:
             path = Path(d)/"old.toml"
@@ -252,7 +252,7 @@ class PercussionTests(unittest.TestCase):
         p = .88
         rows = [dict(note(48+i % 2, 80, time=.05+i*p, off=.05+(i+1)*p), pressure=.7) for i in range(6)]
         for name in XIMBOMBAS:
-            c = load_config("ximbomba", ROOT/f"instruments/models/{name}.toml")
+            c = load_config("ximbomba", ROOT/f"presets/ximbomba/{name}.toml")
             joined = render(rows, 6.5, c)
             apart = sum(render([r], 6.5, c) for r in rows)
             self.assertGreater(np.linalg.norm(joined-apart)/np.linalg.norm(apart), .3)
@@ -268,7 +268,7 @@ class PercussionTests(unittest.TestCase):
         rows = [dict(note(48+i % 2, [85, 62, 70][i % 3], time=.2+i*beat, off=.85+i*beat), pressure=[.8, .7, .75][i % 3])
                 for i in range(6)]
         for name in XIMBOMBAS:
-            c = load_config("ximbomba", ROOT/f"instruments/models/{name}.toml")
+            c = load_config("ximbomba", ROOT/f"presets/ximbomba/{name}.toml")
             # Roughness is seeded: the groan must hold for any hand, not one lucky seed.
             for seed in (1729, 1730, 1731, 1732):
                 c["engine"]["seed"] = seed
@@ -283,7 +283,7 @@ class PercussionTests(unittest.TestCase):
 
     def test_ximbomba_pressure_and_duration_headroom(self):
         for name in XIMBOMBAS:
-            c = load_config("ximbomba", ROOT/f"instruments/models/{name}.toml")
+            c = load_config("ximbomba", ROOT/f"presets/ximbomba/{name}.toml")
             for seed in (1729, 1730):
                 c["engine"]["seed"] = seed
                 for pressure in (.1, .5, .7, 1.):
@@ -308,7 +308,7 @@ class PercussionTests(unittest.TestCase):
 
     def test_fitted_profiles_finite_released_and_velocity_continuous(self):
         for model in ("castanyoles", "ximbomba"):
-            c = load_config(model, ROOT/f"instruments/models/{model}-fitted.toml")
+            c = load_config(model)
             for pitch in KEYS[model]:
                 y = render([note(pitch, 127)], 2, c)
                 self.assertTrue(np.all(np.isfinite(y)))
@@ -324,7 +324,7 @@ class PercussionTests(unittest.TestCase):
 
 
     def test_dancers_headroom(self):
-        c = load_config("castanyoles", ROOT/"instruments/models/castanyoles-fitted.toml")
+        c = load_config("castanyoles")
         c["body"].update(dancers=6, timing_ms=8, tuning_cents=16)
         y = render([note(64, 127)], 2, c)
         self.assertLess(np.max(abs(y)), 1)

@@ -18,7 +18,7 @@ swing = 0.5                 # Linn/MPC swing of the second 16th in each pair; or
 swing_unit = 16             # 8, 16 or 32
 humanize_ms = 0             # Gaussian onset spread; 0 keeps the machine exact
 knobs = { bd = { decay = 0.7, tune = 0.4 }, ch = { tone = 0.6 } }
-# seed = 808, output_gain = 0.5, parameters = "instruments/models/tr808.toml"
+# seed = 808, output_gain = 0.5, preset = "default"
 ```
 
 Use one MIDI track per machine; any channel.

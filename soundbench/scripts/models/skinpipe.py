@@ -8,15 +8,14 @@ from __future__ import annotations
 import hashlib
 import json
 import math
-from pathlib import Path
-import tomllib
 import numpy as np
 from numba import njit
 from scipy.signal import butter, sosfilt, lfilter
 from soundbench.scripts.models.mallorca_winds import ROOT, plan, frequency, bag_wander, _cc_lane, _read, reed_wave
 from soundbench.scripts.models.banjo import MEMBRANE_KEYS, membrane_modes, modal_coefficients, _coefficients
+from soundbench.scripts.paths import preset_path, read_preset
 
-CONFIG = ROOT / 'instruments/models/skinpipe.toml'
+CONFIG = preset_path('skinpipe')
 SCHEMA = {
     'head': MEMBRANE_KEYS | {'radius_m'},
     'strings': set('t60 loss_mix dispersion head_drive head_return damper_t60 pluck_gain pluck_position position_jitter pick_ms pluck_lowpass_hz'.split()),
@@ -69,7 +68,7 @@ def validate(c):
 
 
 def load_config(path=CONFIG):
-    return validate(tomllib.loads(Path(path).read_text()))
+    return validate(read_preset(path))
 
 
 def stream_seed(seed, track, stream, index=0, onset=0):

@@ -21,6 +21,7 @@ import soundfile as sf
 from scipy.signal import stft
 from scipy.optimize import differential_evolution
 import tomli_w
+from soundbench.scripts.paths import preset_names, preset_path
 from soundbench.scripts.models.electric_bass import ROOT, SR, load_config, render, note, assign_string
 
 
@@ -47,8 +48,8 @@ def export(path,y,target=None,plot=True):
 def probes(out):
     out=Path(out);out.mkdir(parents=True,exist_ok=True)
     metrics={}
-    for preset in ('flat','round','warm'):
-        c=load_config(ROOT/f'instruments/models/electric-bass-{preset}.toml')
+    for preset in preset_names('electric-bass'):
+        c=load_config(preset_path('electric-bass',preset))
         sweeps=[]
         for i,p in enumerate(range(28,68)):
             sweeps+=note(i*.55,i*.55+.3,p,90,assign_string(p,c)+1,i)

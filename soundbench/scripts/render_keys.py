@@ -13,9 +13,9 @@ import time
 import mido
 import numpy as np
 from scipy.io.wavfile import write
-from soundbench.scripts.paths import parameters_label, parameters_path
+from soundbench.scripts.paths import preset_bytes, preset_label, preset_path
 from soundbench.scripts.models import organ, electric_piano, pipe_organ
-from soundbench.scripts.models.keys_common import ROOT, SR
+from soundbench.scripts.models.keys_common import SR
 from soundbench.scripts.perform import TempoMap
 
 ENGINES={'organ':organ,'electric-piano':electric_piano,'pipe-organ':pipe_organ}
@@ -45,9 +45,9 @@ def main():
     model=data.get('model',a.manifest.stem.rsplit('.',1)[-1])
     if model not in ENGINES: raise ValueError('manifest needs model organ, pipe-organ or electric-piano')
     engine=ENGINES[model]; options=data.get('settings',{}).get(model.replace('-','_')+'_model',{})
-    allowed={'parameters','output_gain'}|({'registration','tracks'} if model=='pipe-organ' else set())
+    allowed={'preset','output_gain'}|({'registration','tracks'} if model=='pipe-organ' else set())
     if set(options)-allowed: raise ValueError('unknown keyboard model setting')
-    path=parameters_path(options.get('parameters',str(engine.CONFIG.relative_to(ROOT))))
+    path=preset_path(model,options.get('preset'))
     cfg=engine.load_config(path)
     gain=float(options.get('output_gain',cfg['engine']['output_gain']))
     if not np.isfinite(gain) or not 0<gain<=4: raise ValueError('invalid keyboard output gain')
@@ -57,7 +57,7 @@ def main():
         if name is not None and name not in cfg.get('registration',{}): raise ValueError(f'unknown registration {name!r}')
     midi=mido.MidiFile(data['performed_midi']); tempo=TempoMap(midi)
     seconds=tempo.seconds_at(max(sum(m.time for m in tr) for tr in midi.tracks))+cfg['engine']['tail_seconds']
-    digest=hashlib.sha256(path.read_bytes()+json.dumps(options,sort_keys=True).encode()).hexdigest()
+    digest=hashlib.sha256(preset_bytes(path)+json.dumps(options,sort_keys=True).encode()).hexdigest()
     stems={}; peak=0.; count=0; start=time.perf_counter()
     for job in data['jobs']:
         notes,controls=track_events(midi,job['index'],model)
@@ -75,7 +75,7 @@ def main():
         output=Path(job['output']); output.parent.mkdir(parents=True,exist_ok=True)
         write(output,SR,np.rint(audio*2147483647).astype('<i4'))
         count+=len(notes)
-        stems[str(job['index'])]={'engine':'model','model':model,**({'registration':job_cfg['active']} if model=='pipe-organ' else {}),'parameters':parameters_label(path),
+        stems[str(job['index'])]={'engine':'model','model':model,**({'registration':job_cfg['active']} if model=='pipe-organ' else {}),'parameters':preset_label(path),
                                   'parameters_sha256':digest}
     metrics={'stems':stems,'notes':count,'peak':peak,'audio_seconds':seconds,'render_seconds':time.perf_counter()-start}
     a.manifest.with_suffix('.metrics.json').write_text(json.dumps(metrics,indent=2)+'\n')

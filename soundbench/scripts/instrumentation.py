@@ -17,11 +17,11 @@ SFZ_INSTRUMENTS = {
     "banjo-thumb": Path("instruments/banjo-thumb.sfz"),
 }
 # Physical models; a model without a sampled counterpart is its own instrument.
-MODELS = frozenset(("banjo", "voice", "fiddle", "voice2", "voice3", "chimera", "machine-voice", "guitar", "mandolin", "dobro", "flabiol", "xeremia", "tambori", "castanyoles", "ximbomba", "piano", "drums", "organ", "pipe-organ", "electric-piano", "electric-bass", "bass", "skinpipe", "tr808", "tr808-bass", "tr909", "linn"))
-MODEL_ONLY_INSTRUMENTS = frozenset(("voice", "voice2", "voice3", "chimera", "machine-voice", "flabiol", "xeremia", "tambori", "castanyoles", "ximbomba", "fiddle", "mandolin", "dobro", "drums", "organ", "pipe-organ", "electric-piano", "electric-bass", "skinpipe", "tr808", "tr808-bass", "tr909", "linn"))
+MODELS = frozenset(("banjo", "fiddle", "chimera", "guitar", "mandolin", "dobro", "flabiol", "xeremia", "tambori", "castanyoles", "ximbomba", "piano", "drums", "organ", "pipe-organ", "electric-piano", "electric-bass", "bass", "skinpipe", "tr808", "tr808-bass", "tr909", "linn"))
+MODEL_ONLY_INSTRUMENTS = frozenset(("chimera", "flabiol", "xeremia", "tambori", "castanyoles", "ximbomba", "fiddle", "mandolin", "dobro", "drums", "organ", "pipe-organ", "electric-piano", "electric-bass", "skinpipe", "tr808", "tr808-bass", "tr909", "linn"))
 ALIASES = {"piano": "grand", "upright-bass": "bass", "meatbass": "bass"}
 PIANOS = frozenset(("grand", "upright"))
-STEREO_INSTRUMENTS = frozenset(("grand", "upright", "drums", "organ", "pipe-organ", "electric-piano", "voice3", "tr808", "tr808-bass", "tr909", "linn"))
+STEREO_INSTRUMENTS = frozenset(("grand", "upright", "drums", "organ", "pipe-organ", "electric-piano", "tr808", "tr808-bass", "tr909", "linn"))
 PLAYABLE_KEYS = {
     "bass": frozenset(range(12, 66)) | frozenset(range(72, 80)),
     "guitar": frozenset(range(39, 86)),
@@ -34,7 +34,7 @@ MIX_DEFAULTS = {
     "bass": (6.0, 0.0), "guitar": (-6.0, -0.35),
     "fiddle": (0.0, 0.0), "mandolin": (0.0, 0.0), "dobro": (0.0, 0.0),
     "banjo": (2.0, 0.35), "banjo-thumb": (2.0, 0.35),
-    "voice": (0.0, 0.0), "voice2": (0.0, 0.0), "voice3": (0.0, 0.0), "chimera": (0.0, 0.0), "machine-voice": (0.0, 0.0), "flabiol": (0.0, -0.2), "xeremia": (0.0, 0.2), "skinpipe": (0.0, -0.1),
+    "chimera": (0.0, 0.0), "flabiol": (0.0, -0.2), "xeremia": (0.0, 0.2), "skinpipe": (0.0, -0.1),
     "organ": (0.0, 0.0), "pipe-organ": (0.0, 0.0), "electric-piano": (0.0, 0.0),
     "electric-bass": (0.0, 0.0),
     "tambori": (0.0, 0.0), "castanyoles": (0.0, 0.0), "ximbomba": (0.0, 0.0),

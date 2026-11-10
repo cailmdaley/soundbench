@@ -34,7 +34,7 @@ fn voice(
         v.glottis.seed_variation(input.seed);
         // Fixed studio headroom keeps the engine's output limiter (0.75 peak) a
         // safety, so pressure changes loudness as well as timbre. level_db is the
-        // part's constant level, as in voice3.
+        // part's constant level.
         v.output_gain *= 10f64.powf((STUDIO_GAIN_DB + input.level_db) / 20.0);
         let noise = &mut v.airway.noise_gain;
         noise.glottis *= input.aspiration;

@@ -27,7 +27,15 @@ def package_build():
     (ROOT / "build").mkdir(exist_ok=True)
     return ROOT / "build"
 sys.path.insert(0, str(ROOT / "scripts"))
-from soundbench.scripts.models.banjo import CONFIG, _coefficients, assign_string, load_config, membrane_modes, modal_coefficients, render
+from soundbench.scripts.paths import preset_bytes, preset_path
+from soundbench.scripts.models.banjo import _coefficients, assign_string, load_config, membrane_modes, modal_coefficients, render as render_banjo
+
+CONFIG = preset_path("banjo", "membrane")
+
+
+def render(events, seconds, owners=1, config=None):
+    """The banjo engine under its hand-set membrane preset unless told otherwise."""
+    return render_banjo(events, seconds, owners, config or load_config(CONFIG))
 from soundbench.scripts.render_model import assignment_statistics, schedule
 from soundbench.scripts import instrumentation
 import mido
@@ -56,7 +64,7 @@ def midi_tracks(*tracks):
 
 class BanjoTests(unittest.TestCase):
     def setUp(self):
-        self.config = load_config()
+        self.config = load_config(CONFIG)
 
     def test_every_playable_pitch_within_three_cents(self):
         results = []
@@ -211,12 +219,12 @@ class BanjoTests(unittest.TestCase):
             midi_tracks(('banjo', [(0, 480, 62)])).save(midi)
             manifest = path/'render.json'
             manifest.write_text(json.dumps(dict(performed_midi=str(midi), score_midi=str(midi),
-                                                settings={}, jobs=[dict(index=1, output=str(path/'note.wav'))])))
-            subprocess.run([sys.executable, str(ROOT/'scripts/render_model.py'), str(manifest),
-                            '--config', str(config_path)], check=True, capture_output=True)
+                                                settings={'banjo_model': {'preset': str(config_path)}},
+                                                jobs=[dict(index=1, output=str(path/'note.wav'))])))
+            subprocess.run([sys.executable, str(ROOT/'scripts/render_model.py'), str(manifest)], check=True, capture_output=True)
             metrics = json.loads(manifest.with_suffix('.metrics.json').read_text())
-            self.assertEqual(metrics['stems']['1']['parameters'], str(config_path.relative_to(ROOT)))
-            self.assertEqual(metrics['stems']['1']['parameters_sha256'], hashlib.sha256(config_path.read_bytes()).hexdigest())
+            self.assertEqual(metrics['stems']['1']['parameters'], str(config_path.resolve().relative_to(ROOT)))
+            self.assertEqual(metrics['stems']['1']['parameters_sha256'], hashlib.sha256(preset_bytes(config_path)).hexdigest())
             self.assertTrue((path/'note.wav').is_file())
 
     def test_pluck_fingering_overrides_a_track_pin_without_changing_pitch(self):
@@ -230,19 +238,19 @@ class BanjoTests(unittest.TestCase):
         self.assertEqual([a['pitch'] for a in assignments],[50,61,50,62])
 
     def test_selected_gut_config_and_gain_override_provenance(self):
-        config_path = ROOT/'instruments/models/banjo-gut.toml'
+        config_path = preset_path('banjo')
         options = {'output_gain': 3.0}
         with tempfile.TemporaryDirectory(dir=package_build()) as directory:
             path=Path(directory); midi=path/'note.mid'
             midi_tracks(('banjo', [(0,480,62)])).save(midi)
             manifest=path/'render.json'
             manifest.write_text(json.dumps(dict(performed_midi=str(midi), score_midi=str(midi),
-                                                settings={'banjo_model':{'parameters':'instruments/models/banjo-gut.toml', **options}}, jobs=[dict(index=1,output=str(path/'note.wav'))])))
+                                                settings={'banjo_model':{'preset':'default', **options}}, jobs=[dict(index=1,output=str(path/'note.wav'))])))
             subprocess.run([sys.executable,str(ROOT/'scripts/render_model.py'),str(manifest)],check=True,capture_output=True)
             stem=json.loads(manifest.with_suffix('.metrics.json').read_text())['stems']['1']
-            self.assertEqual(stem['parameters'],'instruments/models/banjo-gut.toml')
+            self.assertEqual(stem['parameters'],'presets/banjo/default.toml')
             self.assertEqual(stem['overrides'],options)
-            self.assertEqual(stem['parameters_sha256'],hashlib.sha256(config_path.read_bytes()+json.dumps(options,sort_keys=True).encode()).hexdigest())
+            self.assertEqual(stem['parameters_sha256'],hashlib.sha256(preset_bytes(config_path)+json.dumps(options,sort_keys=True).encode()).hexdigest())
             self.assertTrue((path/'note.wav').is_file())
             with wave.open(str(path/'note.wav')) as w:
                 quiet=np.frombuffer(w.readframes(w.getnframes()),dtype='<i4').copy()

@@ -163,8 +163,9 @@ class Skinpipe(unittest.TestCase):
 
     def test_banjo_radius_extension_bit_identity(self):
         from soundbench.scripts.models.banjo import render as banjo_render, load_config as banjo_config
+        from soundbench.scripts.paths import preset_path
         events=[[0,0,0,0,62,90,0,1,0,0,0],[9600,0,4,1,69,82,0,1,0,0,1]]
-        y=banjo_render(events,2,2,banjo_config())
+        y=banjo_render(events,2,2,banjo_config(preset_path('banjo', 'membrane')))
         self.assertEqual(hashlib.sha256(y.tobytes()).hexdigest(),
                          '81787ea34b32ce3c8721707a869072b4e7f240a60654ac42e2f30610ab6dfc2d')
 

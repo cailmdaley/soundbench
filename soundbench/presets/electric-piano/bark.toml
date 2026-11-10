@@ -1,0 +1,13 @@
+inherits = "default"
+
+[engine]
+output_gain = 0.261416199434473
+
+[tine]
+upper_loss = 4.5
+tonebar_gain = 0.16
+bell_gain = 0.1
+
+[pickup]
+offset = 0.35
+excursion = 0.85

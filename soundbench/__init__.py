@@ -1,5 +1,5 @@
 """Playable physical instruments, audio measurement and recording fits."""
-__all__ = ["Note", "render", "notes_to_midi"]
+__all__ = ["Note", "render", "presets", "notes_to_midi"]
 
 
 def __getattr__(name):

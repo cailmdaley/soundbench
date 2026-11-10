@@ -11,8 +11,9 @@ import math
 import numpy as np
 from scipy.signal import butter, sosfilt
 from .keys_common import SR, ROOT, load_config as _load, validate, curve, smooth, finish
+from soundbench.scripts.paths import preset_path
 
-CONFIG = ROOT/'instruments/models/pipe-organ.toml'
+CONFIG = preset_path('pipe-organ')
 FAMILY_KEYS = {'power', 'cutoff_hz', 'even', 'ripple_db', 'attack_s', 'release_s',
                'chiff_harmonic', 'chiff_db', 'chiff_ms', 'break_hz'}
 

@@ -13,7 +13,7 @@ Put connected organ parts on one track/channel when their percussion should shar
 keys = { model = "organ", gain_db = 0, pan = 0 }
 
 [organ_model]
-parameters = "instruments/models/organ-gospel.toml"
+preset = "gospel"
 
 [[controls]]
 track = "keys"
@@ -46,14 +46,14 @@ Harmonics above F♯8 fold down by octaves; the 16-foot contact on the bottom C2
 
 ## Registrations
 
-| TOML under `instruments/models/` | Registration | Use |
+| Preset | Registration | Use |
 | --- | --- | --- |
-| `organ.toml` | `888000000` | Full low drawbars; pop/soul comping. |
-| `organ-hollow.toml` | `808000000` | Less fifth, hollow accompaniment. |
-| `organ-gospel.toml` | `888800000` | Gospel comping, extra octave; louder than the default at the same gain. |
-| `organ-jazz.toml` | `800000000` | Sub-octave drawbar plus soft, fast third-harmonic percussion. |
-| `organ-clean.toml` | `888800000` | Gospel registration with lighter preamp drive. |
-| `organ-reference-flute.toml` | `006080300` | **Diagnostic M100 line-out preset**, rotary off; not a B-3 flute claim. |
+| `default` | `888000000` | Full low drawbars; pop/soul comping. |
+| `hollow` | `808000000` | Less fifth, hollow accompaniment. |
+| `gospel` | `888800000` | Gospel comping, extra octave; louder than the default at the same gain. |
+| `jazz` | `800000000` | Sub-octave drawbar plus soft, fast third-harmonic percussion. |
+| `clean` | `888800000` | Gospel registration with lighter preamp drive. |
+| `flute` | `006080300` | Fitted to a line-out flute recording, rotary off; not a B-3 flute claim. |
 
 Percussion has one decaying envelope shared by all keys on that channel.
 A chord struck from silence triggers once; a legato note joins the existing decay without restarting it.

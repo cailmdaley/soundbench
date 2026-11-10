@@ -9,7 +9,7 @@ piano = { model = "piano", gain_db = 0, pan = 0 }
 
 # Optional, piece-wide:
 [piano_model]
-parameters = "instruments/models/piano.toml"
+preset = "default"                # or "close"
 ```
 
 The piano binding inherits the grand-piano stereo balance and automatic-pedal handling.

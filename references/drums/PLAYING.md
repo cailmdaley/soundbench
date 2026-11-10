@@ -9,14 +9,14 @@ The engine renders at 48 kHz, with fixed gain and a stereo close/overhead image.
 kit = { model = "drums", gain_db = 0, pan = 0 }
 
 [drums_model]
-parameters = "instruments/models/drums.toml"
+preset = "default"                # or "open", "rock"
 seed = 1974
 # output_gain = 0.32
 ```
 
-`drums.toml` is the short felt-muffled, ported funk kit.
-`drums-open.toml` has an unported, unmuffled, softer-beater kick with a longer decay.
-`drums-rock-fitted.toml` is the recording-fitted rock alternative; it isn't a validated funk or jazz kit.
+The `default` preset is the short felt-muffled, ported funk kit.
+`open` has an unported, unmuffled, softer-beater kick with a longer decay.
+`rock` is the recording-fitted rock alternative; it isn't a validated funk or jazz kit.
 Keep `pan = 0` to retain the internal image (hats left, ride/floor tom right, kick center).
 The room stage applies once to the mix; the Nagra tape stage deliberately mono-sums the kit at its room microphone.
 

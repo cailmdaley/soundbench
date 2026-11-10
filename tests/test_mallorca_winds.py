@@ -118,7 +118,7 @@ class Winds(unittest.TestCase):
     def test_proxy_presets_tuning_and_release(self):
         from soundbench.scripts.models.mallorca_winds import ROOT
         for inst,pitches in [('flabiol',[74,78,86,98]),('xeremia',[59,64,66,72])]:
-            c=load_config(inst,ROOT/f'instruments/models/{inst}-proxy-fit.toml')
+            c=load_config(inst)
             c['drone_gain']=c['wobble_cents']=c['squawk_cents']=c['sag_cents']=0
             for p in pitches:
                 y=render([note(p,off=1.5)],3,c,inst)
@@ -310,7 +310,7 @@ class Winds(unittest.TestCase):
         import tempfile,os
         with tempfile.TemporaryDirectory() as d:
             path=os.path.join(d,'x.toml')
-            text=(ROOT/'instruments/models/xeremia.toml').read_text()
+            text=(ROOT/'presets/xeremia/default.toml').read_text()
             open(path,'w').write(text+'\nreed_turbulence = 0.7\n')
             with self.assertRaises(ValueError):
                 load_config('xeremia',path)

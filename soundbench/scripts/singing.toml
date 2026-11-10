@@ -1,0 +1,103 @@
+# The score side of singing: singer ranges, characters and phrase timing,
+# shared by every singer that reads a [singing] block (scripts/singing.py).
+
+seed = 1892
+legato_gap_s = 0.12            # a longer silence between syllables ends a phrase
+
+# MIDI ranges a singer is gated to; a part may set its own range on purpose.
+[singers.bass]
+range = [40, 64]
+
+[singers.baritone]
+range = [45, 67]
+
+[singers.tenor]
+range = [48, 72]
+
+[singers.alto]
+range = [53, 74]
+
+[singers.soprano]
+range = [60, 74]
+
+# Characters are independent of tract size and singer identity.
+# Vibrato extents are half-extents in cents; attack and tail are milliseconds.
+[characters.plain]
+effort_center = 0.5
+effort_span = 1.0
+vibrato_rate = 6.8
+vibrato_extent = 27.0
+vibrato_delay = 0.2
+vibrato = "natural"
+onset = "soft"
+attack_ms = 70.0
+release = "held"
+breath_tail_ms = 100.0
+breath_gain = 1.0
+roughness = 0.0
+sag_cents = 0.0
+vowel_opening_hz = 0.0
+
+[characters.intimate]
+effort_center = 0.22
+effort_span = 0.55
+vibrato_rate = 5.5
+vibrato_extent = 18.0
+vibrato_delay = 0.4
+vibrato = "natural"
+onset = "breathy"
+attack_ms = 150.0
+release = "breath"
+breath_tail_ms = 160.0
+breath_gain = 2.0
+roughness = 0.0
+sag_cents = 0.0
+vowel_opening_hz = 0.0
+
+[characters.projected]
+effort_center = 0.67
+effort_span = 1.2
+vibrato_rate = 6.0
+vibrato_extent = 38.0
+vibrato_delay = 0.12
+vibrato = "natural"
+onset = "hard"
+attack_ms = 25.0
+release = "held"
+breath_tail_ms = 60.0
+breath_gain = 1.0
+roughness = 0.0
+sag_cents = 0.0
+vowel_opening_hz = 0.0
+
+[characters.worn]
+effort_center = 0.4
+effort_span = 0.8
+vibrato_rate = 5.0
+vibrato_extent = 45.0
+vibrato_delay = 0.25
+vibrato = "natural"
+onset = "scooped"
+attack_ms = 80.0
+release = "fall"
+breath_tail_ms = 180.0
+breath_gain = 2.5
+roughness = 1.0
+sag_cents = 8.0
+vowel_opening_hz = 0.0
+
+[characters.young]
+effort_center = 0.58
+effort_span = 0.6
+vibrato_rate = 8.0
+vibrato_extent = 7.0
+vibrato_delay = 0.3
+vibrato = "natural"
+onset = "soft"
+attack_ms = 40.0
+release = "clean"
+breath_tail_ms = 60.0
+breath_gain = 0.5
+roughness = 0.0
+sag_cents = 0.0
+vowel_opening_hz = 0.0

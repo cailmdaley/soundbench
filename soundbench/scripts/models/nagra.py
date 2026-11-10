@@ -45,9 +45,10 @@ from pathlib import Path
 
 import numpy as np
 from scipy.signal import butter, lfilter, oaconvolve, resample_poly, sosfilt
+from soundbench.scripts.paths import ROOMS
 
 ROOT = Path(__file__).resolve().parents[2]
-CONFIG = ROOT / "instruments" / "models" / "nagra.toml"
+CONFIG = ROOMS / "nagra.toml"
 SAMPLE_RATE = 48_000
 CENTS = math.log(2) / 1200
 

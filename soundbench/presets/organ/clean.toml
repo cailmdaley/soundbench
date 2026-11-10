@@ -1,0 +1,7 @@
+inherits = "default"
+
+[drawbars]
+registration = "888800000"
+
+[preamp]
+drive = 0.35

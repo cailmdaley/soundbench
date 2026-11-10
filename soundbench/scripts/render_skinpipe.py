@@ -12,8 +12,8 @@ from pathlib import Path
 import time
 import mido
 import numpy as np
-from soundbench.scripts.paths import parameters_label, parameters_path
-from soundbench.scripts.models.skinpipe import ROOT, load_config, validate, render
+from soundbench.scripts.paths import preset_bytes, preset_label, preset_path
+from soundbench.scripts.models.skinpipe import load_config, validate, render
 from soundbench.scripts.render_winds import midi_controls, write_wav
 from soundbench.scripts.instrumentation import aliases
 from soundbench.scripts.perform import TempoMap
@@ -21,14 +21,14 @@ from soundbench.scripts.perform import TempoMap
 
 def selected_config(settings):
     options=settings.get('skinpipe_model',{})
-    if not isinstance(options,dict) or set(options)-{'parameters','output_gain','courses'}:
-        raise ValueError('skinpipe_model accepts parameters, output_gain and courses only')
-    path=parameters_path(options.get('parameters','instruments/models/skinpipe.toml'))
+    if not isinstance(options,dict) or set(options)-{'preset','output_gain','courses'}:
+        raise ValueError('skinpipe_model accepts preset, output_gain and courses only')
+    path=preset_path('skinpipe',options.get('preset'))
     config=load_config(path)
     for key in ('output_gain','courses'):
         if key in options: config[key]=options[key]
     validate(config)
-    digest=hashlib.sha256(path.read_bytes()+json.dumps(options,sort_keys=True).encode()).hexdigest()
+    digest=hashlib.sha256(preset_bytes(path)+json.dumps(options,sort_keys=True).encode()).hexdigest()
     return config,path,digest,options
 
 
@@ -65,7 +65,7 @@ def main():
         audio=render(rows,seconds,c,controls,plucks,track_id=midi.tracks[index].name)
         write_wav(Path(job['output']),audio,c['sample_rate'])
         peak=max(peak,float(np.max(abs(audio),initial=0)))
-        stems[str(index)]=dict(engine='model',model='skinpipe',parameters=parameters_label(path),
+        stems[str(index)]=dict(engine='model',model='skinpipe',parameters=preset_label(path),
             parameters_sha256=digest,overrides=options,track_indices=[index]+[j['index'] for j in thumbs],
             track_names=[midi.tracks[i].name for i in [index]+[j['index'] for j in thumbs]])
         schedule[str(index)]=dict(notes=rows,controls=controls,plucks=plucks)

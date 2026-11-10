@@ -2,7 +2,6 @@
 import json
 import subprocess
 import sys
-from pathlib import Path
 
 import numpy as np
 import pytest
@@ -17,7 +16,7 @@ PITCHES.update(bass=43, **{"electric-bass": 43, "fiddle": 69, "mandolin": 67, "d
 
 @pytest.mark.parametrize("model", sorted(RENDERERS))
 def test_each_instrument_makes_finite_sound(model):
-    lyric = "ah" if model in {"voice", "voice2", "voice3", "chimera", "machine-voice"} else None
+    lyric = "ah" if model == "chimera" else None
     audio, sr = render(model, [Note(PITCHES[model], 0, .35, 72, lyric)])
     assert sr == 48000
     assert audio.ndim == 2 and audio.shape[1] in (1, 2)
@@ -54,11 +53,27 @@ def test_cli_plays_notes_json(tmp_path):
     assert out.exists()
 
 
-def test_every_parameter_has_provenance():
+def test_every_preset_loads_and_has_provenance():
     import tomllib
-    import soundbench
-    bank = Path(soundbench.__file__).parent / "instruments/models"
-    groups = tomllib.loads((bank / "PROVENANCE.toml").read_text())["sets"]
+    from soundbench.api import presets
+    from soundbench.scripts.paths import PRESETS, preset_path, read_preset
+    groups = tomllib.loads((PRESETS / "PROVENANCE.toml").read_text())["sets"]
     names = [name for group in groups for name in group["files"]]
     assert len(names) == len(set(names))
-    assert set(names) == {p.name for p in bank.iterdir() if p.suffix in {".toml", ".json"} and p.name != "PROVENANCE.toml"}
+    assert set(names) == {str(p.relative_to(PRESETS)) for p in PRESETS.rglob("*")
+                          if p.suffix in {".toml", ".json"} and p.name != "PROVENANCE.toml"}
+    for model in set(RENDERERS) - {"chimera"}:
+        assert presets(model)[0] == "default"
+        for name in presets(model):
+            assert read_preset(preset_path("tr808" if model == "tr808-bass" else model, name))
+
+
+def test_a_named_preset_and_a_preset_file_play(tmp_path):
+    note = [Note(62, 0, .3, 80)]
+    steel, _ = render("banjo", note, preset="steel")
+    own = tmp_path / "mine.toml"
+    own.write_text('inherits = "banjo/steel"\n')
+    mine, _ = render("banjo", note, preset=own)
+    assert np.array_equal(steel, mine)
+    with pytest.raises(RuntimeError, match="no preset"):
+        render("banjo", note, preset="nope")

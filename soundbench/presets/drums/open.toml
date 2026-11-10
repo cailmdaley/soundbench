@@ -1,0 +1,7 @@
+inherits = "default"
+
+[kick]
+t60 = 0.8
+hardness = 0.2
+felt = 0.0
+port = 0.0

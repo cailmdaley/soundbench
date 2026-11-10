@@ -15,16 +15,16 @@ import time
 
 import mido
 import numpy as np
-from soundbench.scripts.paths import parameters_path
+from soundbench.scripts.paths import preset_bytes, preset_path
 from soundbench.scripts.instrumentation import matching_tracks
-from soundbench.scripts.models.guitar import CONFIG, ROOT, load_config, configure, assign_string, render, note, strum
+from soundbench.scripts.models.guitar import load_config, configure, assign_string, render, note, strum
 from soundbench.scripts.perform import TempoMap, BarMap
 from soundbench.scripts.plucked import track_options
 from soundbench.scripts.models.guitar_release import finish
 from soundbench.scripts.render_model import notes, write_wav, assignment_statistics
 
 
-def schedule(performed, score, settings, indices, config, preset='steel'):
+def schedule(performed, score, settings, indices, config):
     sr = 48000
     tempo, source_tempo, bars = TempoMap(performed), TempoMap(score), BarMap(score)
     names = {i: performed.tracks[i].name for i in indices}
@@ -114,8 +114,8 @@ def schedule(performed, score, settings, indices, config, preset='steel'):
         for ordinal, r in enumerate(sorted(selected, key=lambda r: -r['pitch'])):
             r['art'] = art
             r['explicit'] = art['strings'][ordinal] if 'strings' in art else art.get('string', r['explicit'])
-        if kind == 'bend' and (preset != 'steel' or abs(float(art.get('to', 99))) > 1):
-            raise ValueError('bends are steel only, within one semitone')
+        if kind == 'bend' and not abs(float(art.get('to', 99))) <= config['strings']['max_bend_semitones']:
+            raise ValueError(f"this preset's strings bend at most {config['strings']['max_bend_semitones']} semitones")
         if kind in ('slide', 'bend'):
             if not {'to', 'duration_beats'} <= set(art) or float(art['duration_beats']) <= 0 or art.get('shape', 'linear') not in ('linear', 'ease'):
                 raise ValueError('pitch ramp needs to, positive duration_beats and linear/ease shape')
@@ -214,12 +214,9 @@ def main():
     args = parser.parse_args()
     data = json.loads(args.manifest.read_text())
     options = data['settings'].get('guitar_model', {})
-    if set(options)-{'preset', 'parameters', 'output_gain', 'tuning', 'capo'}:
+    if set(options)-{'preset', 'output_gain', 'tuning', 'capo'}:
         raise ValueError('unknown guitar_model option')
-    preset = options.get('preset', 'steel')
-    if preset not in ('steel', 'nylon'):
-        raise ValueError('preset must be steel or nylon')
-    path = parameters_path(options.get('parameters', f'instruments/models/guitar-{preset}.toml'))
+    path = preset_path('guitar', options.get('preset'))
     c = configure(load_config(path), options.get('tuning', 'standard'), options.get('capo', 0))
     if 'output_gain' in options:
         gain = float(options['output_gain'])
@@ -228,7 +225,7 @@ def main():
         c['engine']['output_gain'] = gain
     performed, score = mido.MidiFile(data['performed_midi']), mido.MidiFile(data['score_midi'])
     indices = [job['index'] for job in data['jobs']]
-    events, seconds, assignment = schedule(performed, score, data['settings'], indices, c, preset)
+    events, seconds, assignment = schedule(performed, score, data['settings'], indices, c)
     render([], .001, len(indices), c)
     start = time.perf_counter()
     audio = render(events, seconds, len(indices), c)
@@ -236,13 +233,13 @@ def main():
     stems = {}
     for owner, job in enumerate(data['jobs']):
         write_wav(Path(job['output']), audio[owner])
-        stems[str(job['index'])] = dict(engine='model', model='guitar', preset=preset,
-            parameters=str(path), parameters_sha256=hashlib.sha256(path.read_bytes()+json.dumps(options, sort_keys=True).encode()).hexdigest(), overrides=options)
+        stems[str(job['index'])] = dict(engine='model', model='guitar',
+            parameters=str(path), parameters_sha256=hashlib.sha256(preset_bytes(path)+json.dumps(options, sort_keys=True).encode()).hexdigest(), overrides=options)
     metrics = dict(stems=stems, audio_seconds=seconds, render_seconds=elapsed,
         realtime_factor=seconds/elapsed, assignment=assignment,
         peak=float(np.max(np.abs(audio), initial=0)), assignment_statistics=assignment_statistics(events))
     args.manifest.with_suffix('.metrics.json').write_text(json.dumps(metrics, indent=2)+'\n')
-    print(f'Guitar ({preset}): {seconds:.2f}s in {elapsed:.3f}s ({seconds/elapsed:.1f}x realtime)')
+    print(f'Guitar ({path.stem}): {seconds:.2f}s in {elapsed:.3f}s ({seconds/elapsed:.1f}x realtime)')
 
 
 if __name__ == '__main__':

@@ -10,7 +10,6 @@ import copy
 import json
 import math
 from pathlib import Path
-import tomllib
 
 import numpy as np
 from numba import njit
@@ -18,15 +17,16 @@ from scipy.signal import butter, firwin, firwin2, freqz, lfilter, minimum_phase,
 from soundbench.scripts.models.string_loss import design_loss
 import soundbench.scripts.models.fiddle_player as fiddle_player
 from soundbench.scripts.models.fiddle_player import normal_force, bow_shape, grit_controls, helmholtz, helmholtz_score
+from soundbench.scripts.paths import preset_path, read_preset
 
 ROOT = Path(__file__).resolve().parents[2]
-CONFIG = ROOT / 'instruments/models/fiddle.toml'
+CONFIG = preset_path('fiddle')
 TUNINGS = {'standard': [76, 69, 62, 55], 'AEAE': [76, 69, 64, 57], 'ADAE': [76, 69, 62, 57],
            'GDGD': [74, 67, 62, 55]}
 
 
 def load_config(path=CONFIG, tuning='standard'):
-    c = tomllib.loads(Path(path).read_text())
+    c = read_preset(path)
     if set(c) != {'engine', 'strings', 'bow', 'body'}:
         raise ValueError('expected engine, strings, bow, body')
     for section in c.values():

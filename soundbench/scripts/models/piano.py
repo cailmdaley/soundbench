@@ -9,26 +9,26 @@ from functools import lru_cache
 import json
 import math
 from pathlib import Path
-import tomllib
 
 import numpy as np
 from numba import njit
 from scipy.signal import butter, sosfilt, sosfreqz
 from .piano_bridge import coupled_poles, weight_initial_excitation
+from soundbench.scripts.paths import data_path, preset_path, read_preset
 
-CONFIG = Path(__file__).resolve().parents[2] / 'instruments/models/piano.toml'
+CONFIG = preset_path('piano')
 
 
 def load_config(path=CONFIG):
-    path = Path(path)
-    cfg = tomllib.loads(path.read_text())
-    data = path.parent / cfg['engine']['modal_data']
-    cfg['data'] = read_data(str(data))
-    cfg['release_data'] = json.loads((path.parent/cfg['engine']['release_data']).read_text())['profiles']
+    cfg = read_preset(path)
     e = cfg['engine']
+    # Model data: an absolute path, or a file in the piano's data folder.
+    data = {k: Path(v) if Path(v).is_absolute() else data_path('piano', v) for k, v in e.items() if k.endswith('_data')}
+    cfg['data'] = read_data(str(data['modal_data']))
+    cfg['release_data'] = json.loads(data['release_data'].read_text())['profiles']
     for name in ('coupled', 'body'):
         if name+'_data' in e:
-            cfg[name] = read_auxiliary(str(path.parent/e[name+'_data']))
+            cfg[name] = read_auxiliary(str(data[name+'_data']))
     if e['sample_rate'] != 48000 or not 0 < e['output_gain'] <= 4:
         raise ValueError('piano requires 48 kHz and a positive bounded gain')
     if not 0 < cfg['damper']['release_s'] <= 2 or not 0 < e['max_note_seconds'] <= 60:

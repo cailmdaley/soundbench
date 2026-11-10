@@ -8,26 +8,26 @@ from __future__ import annotations
 import copy
 import math
 from pathlib import Path
-import tomllib
 
 import numpy as np
 from numba import njit
 from scipy.signal import lfilter
 
 from .mallorca_percussion import bordon_contact, contact, modal_signal, tambori_modes
+from soundbench.scripts.paths import preset_path, read_preset
 
 ROOT = Path(__file__).resolve().parents[2]
-CONFIG = ROOT / "instruments/models/drums.toml"
+CONFIG = preset_path("drums")
 KEYS = (35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 53, 57, 59, 60, 61, 62, 63)
 HATS = (42, 44, 46, 63)
 BRUSHES = (60, 61, 62)
 
 
 def load_config(path=CONFIG):
-    c = tomllib.loads(Path(path).read_text())
+    c = read_preset(path)
     if c.get("instrument") != "drums":
         raise ValueError("preset instrument must be drums")
-    template = tomllib.loads(CONFIG.read_text())
+    template = read_preset(CONFIG)
     if set(c) != set(template) or any(set(c[s]) != set(template[s]) for s in template if s != "instrument"):
         raise ValueError("unexpected drum preset schema")
     for s in c:

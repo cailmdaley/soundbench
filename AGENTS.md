@@ -7,6 +7,7 @@ There are no bundled recordings or song scores.
 ## Play an instrument
 
 Use `soundbench.render(model, notes)` or `render(model, midi=path)` from Python.
+`preset="steel"` picks a named preset (`soundbench.presets(model)` lists them), and a path picks a preset file of your own.
 A `Note` has MIDI pitch, start/duration in seconds, velocity and an optional lyric.
 `controls=[(seconds, controller, value), ...]` adds CC events to a note list.
 For pitch bends, multiple tracks or detailed controller curves, supply a MIDI file.
@@ -29,7 +30,9 @@ Do not infer that high notes passing a metric sound pleasant.
 
 ## Develop an instrument
 
-Synthesis lives under `soundbench/scripts/models/`; parameters live under `soundbench/instruments/models/`.
+Synthesis lives under `soundbench/scripts/models/`; presets live under `soundbench/presets/<instrument>/`.
+An instrument has one model and one folder: `default.toml`, named presets (a preset beginning `inherits = "default"` holds only what differs), and internal data in `data/`.
+A different setting of the same physics is a preset, never a second model; recording chains (tape, microphones, rooms) live in `soundbench/rooms/`.
 MIDI scheduling and articulation translation live in `soundbench/scripts/render_*.py`.
 Register a new model in `soundbench/api.py` and the internal instrumentation/dispatch registries.
 Keep one interface: note or MIDI events and settings in, finite floating-point audio out.
@@ -37,9 +40,10 @@ Keep one interface: note or MIDI events and settings in, finite floating-point a
 Add tests for tuning across the compass, velocity response, seed repeatability, release tails, controller changes, overlapping notes and replacement-note ownership.
 A short diagnostic étude is welcome; a song or album doesn't belong here.
 Document the compass, controls, approximations and actual listening status.
-Add every parameter file to the adjacent `PROVENANCE.toml`, crediting any openly licensed recordings it was fitted to.
+Add every preset and data file to `soundbench/presets/PROVENANCE.toml`, crediting any openly licensed recordings it was fitted to.
 Never add a sample, reference excerpt or transcription merely because fitting used it.
-A fitted parameter file is a preset of its model, not the model of the recorded instrument; name and describe it by how it plays.
+A fitted preset is a setting of its model, not the model of the recorded instrument; name and describe it by how it plays.
+Ship only presets someone would play: a fit's intermediate steps stay in the fit's output folder.
 
 ## Check by measurement
 

@@ -166,8 +166,8 @@ class KeysTests(unittest.TestCase):
 
     def test_preset_stability(self):
         rows=[note(p,127,off=.5) for p in (36,48,55,60,64,67,72,76)]
-        for engine,pattern in ((organ,'organ*.toml'),(ep,'electric-piano*.toml')):
-            for path in (ROOT/'instruments/models').glob(pattern):
+        for engine,name in ((organ,'organ'),(ep,'electric-piano')):
+            for path in (ROOT/'presets'/name).glob('*.toml'):
                 cfg=engine.load_config(path); y=engine.render(rows,1.5,cfg)
                 self.assertTrue(np.isfinite(y).all(),path.name)
                 self.assertLess(abs(y).max(),1,path.name)

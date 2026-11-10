@@ -9,8 +9,7 @@ Steel and nylon can't coexist in the same render; render them separately.
 guitar = { model = "guitar", gain_db = -6, pan = -0.35 }
 
 [guitar_model]
-preset = "steel"                 # steel (default) or nylon
-# parameters = "instruments/models/guitar-steel.toml"
+preset = "nylon"                 # steel strings by default
 # output_gain = 20.0              # example absolute engine gain override, not dB
 # tuning = "dadgad"               # standard, dadgad, open-g, or six MIDI opens
 # capo = 2                        # 0..12; score still uses sounding pitches
@@ -59,7 +58,7 @@ This table lists every supported kind and its extra fields.
 | Kind | Request and behavior |
 |---|---|
 | `pluck` | One scored note; optional `string = 1..6`, `hardness = "preset" / "pick" / "flesh" / "nail"`, `position = 0.01..0.49` (fraction of speaking length). `pick` uses the preset; flesh is softer, nail harder. |
-| `strum` | One scored chord on one track: a hand crossing the strings. `strings = [...]` pairs strings with chord pitches **highest first**; omit for allocation. `direction = "down" / "up"`. Without `speed_ms` the stroke takes the hand's time across the strings it spans: 30 ms for six strings at velocity 90 and 100 bpm, shorter when louder or faster (`instruments/models/guitar-stroke.toml`), with seeded variation. Gaps lengthen after heavier strings and force falls across the stroke. `speed_ms = 10..80` instead fixes the first-to-last time. Upstrokes reach the top three or four strings; `reach = n` sets how many strings a stroke strikes from its starting side. `mute = T60` (0.005..2 s) damps the struck strings 18 ms after each sounds: a palm-muted strum (for a choked brush use `chuck`). `accent = 0..1.5`, strictly positive, scales the first string only (default 1). Optional hardness. Down goes from low to high strings. The earliest performed chord note supplies a common velocity. Fretted chord tones begin damping at their sustain-extended note-offs; open tones ring until retrigger/damp/end. |
+| `strum` | One scored chord on one track: a hand crossing the strings. `strings = [...]` pairs strings with chord pitches **highest first**; omit for allocation. `direction = "down" / "up"`. Without `speed_ms` the stroke takes the hand's time across the strings it spans: 30 ms for six strings at velocity 90 and 100 bpm, shorter when louder or faster (`presets/guitar/data/stroke.toml`), with seeded variation. Gaps lengthen after heavier strings and force falls across the stroke. `speed_ms = 10..80` instead fixes the first-to-last time. Upstrokes reach the top three or four strings; `reach = n` sets how many strings a stroke strikes from its starting side. `mute = T60` (0.005..2 s) damps the struck strings 18 ms after each sounds: a palm-muted strum (for a choked brush use `chuck`). `accent = 0..1.5`, strictly positive, scales the first string only (default 1). Optional hardness. Down goes from low to high strings. The earliest performed chord note supplies a common velocity. Fretted chord tones begin damping at their sustain-extended note-offs; open tones ring until retrigger/damp/end. |
 | `chuck` | Same fields; each string is choked 18 ms after it sounds, with 35 ms T60, and released at 65 ms. A pitched muted brush, not a recorded percussive slap. |
 | `rasgueado` | Same fields; `fingers = 1..4` (default 3). Sweeps begin at least 35 ms apart, with a 3 ms turnaround gap after slower strokes; they alternate direction and lose 8% force per finger. Start with `speed_ms = 18`, `hardness = "nail"`, velocities 65–85. |
 | `palm-mute` | One note, optional string/hardness/position; damp begins 30 ms after attack with 35 ms T60. |

@@ -8,4 +8,4 @@ Its custom permission allows use including commercial musical works, but restric
 No source waveform enters the runtime instrument.
 The recordings don't establish resonator construction, string material, pick type or physical-string assignments.
 
-Parameter credits are in `soundbench/instruments/models/PROVENANCE.toml`.
+Parameter credits are in `soundbench/presets/PROVENANCE.toml`.

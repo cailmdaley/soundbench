@@ -14,8 +14,8 @@ import time
 
 import mido
 import numpy as np
-from soundbench.scripts.paths import parameters_path
-from soundbench.scripts.models.electric_bass import ROOT, load_config, assign_string, render, note, SR
+from soundbench.scripts.paths import preset_bytes, preset_path
+from soundbench.scripts.models.electric_bass import load_config, assign_string, render, note, SR
 from soundbench.scripts.perform import TempoMap
 from soundbench.scripts.render_model import write_wav
 
@@ -90,11 +90,9 @@ def main():
     parser.add_argument('manifest',type=Path)
     args=parser.parse_args(); data=json.loads(args.manifest.read_text())
     options=data['settings'].get('electric_bass_model',{})
-    if set(options)-{'preset','parameters','output_gain'}:
+    if set(options)-{'preset','output_gain'}:
         raise ValueError('unknown electric_bass_model option')
-    preset=options.get('preset','flat')
-    if preset not in ('flat','round'):raise ValueError('preset is flat or round')
-    path=parameters_path(options.get('parameters',f'instruments/models/electric-bass-{preset}.toml'))
+    path=preset_path('electric-bass',options.get('preset'))
     config=load_config(path)
     if 'output_gain' in options:
         gain=float(options['output_gain'])
@@ -107,7 +105,7 @@ def main():
     stems={}
     for owner,job in enumerate(data['jobs']):
         write_wav(Path(job['output']),audio[owner])
-        stems[str(job['index'])]=dict(engine='model',model='electric-bass',preset=preset,parameters=str(path),parameters_sha256=hashlib.sha256(path.read_bytes()+json.dumps(options,sort_keys=True).encode()).hexdigest(),overrides=options)
+        stems[str(job['index'])]=dict(engine='model',model='electric-bass',parameters=str(path),parameters_sha256=hashlib.sha256(preset_bytes(path)+json.dumps(options,sort_keys=True).encode()).hexdigest(),overrides=options)
     metrics=dict(stems=stems,audio_seconds=seconds,render_seconds=elapsed,peak=float(np.max(abs(audio),initial=0)),assignment=assignment)
     args.manifest.with_suffix('.metrics.json').write_text(json.dumps(metrics,indent=2)+'\n')
     print(f'Electric bass: {seconds:.2f}s in {elapsed:.2f}s')
