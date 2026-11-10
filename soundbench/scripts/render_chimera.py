@@ -179,6 +179,15 @@ def prepare(data, *, baseline=False):
         if len(matches) != 1:
             raise ValueError(f"part {selector!r} must select one track")
         by_index[matches[0]] = part
+    # [chimera.parts.<part>]: the engine's noise sources, multiples of its own.
+    noise = {}
+    for selector, options in settings.get("chimera", {}).get("parts", {}).items():
+        matches = matching_tracks(selector, tracks, names)
+        if len(matches) != 1:
+            raise ValueError(f"chimera part {selector!r} must select one track")
+        if set(options) - {"aspiration", "frication"} or not all(0 < v <= 10 for v in options.values()):
+            raise ValueError("chimera parts take aspiration and frication, each in (0, 10]")
+        noise[matches[0]] = options
     seconds = tempo.seconds_at(max(sum(m.time for m in t) for t in performed.tracks)) + 1.0
     marked = {} if baseline else marks_for(settings.get("voice3", {}).get("marks", []), score,
                                            {job["index"]: names[job["index"]] for job in data["jobs"]})
@@ -216,6 +225,8 @@ def prepare(data, *, baseline=False):
         part_seed = int(np.random.SeedSequence([seed, index]).generate_state(1)[0])
         native = timeline(rows, body, seconds, baseline=baseline, part=part, singer=singers[0], lexicon=lexicon,
                           controls=controls_for(performed, index), seed=part_seed)
+        if not baseline:
+            native.update(noise.get(index, {}))
         result.append((job, native, {"name": names[index], "singer": singers[0], "notes": len(rows),
                                      "words": " ".join(r["syllable"].text for r in rows if r.get("syllable"))}))
     return result

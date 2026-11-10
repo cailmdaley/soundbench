@@ -163,6 +163,16 @@ class ChimeraManifest(unittest.TestCase):
                          "marks": [{"part": "tenor", "bar": 1, "beat": 2, "vibrato": "straight"}]}},
                      "jobs": [{"index": i, "output": str(self.root / f"{i}.wav")} for i in [1, 2]]}
 
+    def test_chimera_parts_set_the_engine_noise(self):
+        from soundbench.scripts.render_chimera import prepare
+        data = {**self.data, "settings": {**self.data["settings"], "chimera": {"parts": {"tenor": {"aspiration": 2, "frication": 5}}}}}
+        a, b = (native for _, native, _ in prepare(data))
+        self.assertEqual((a["aspiration"], a["frication"]), (2, 5))
+        self.assertNotIn("aspiration", b)
+        data["settings"]["chimera"]["parts"]["tenor"]["breath"] = 1
+        with self.assertRaisesRegex(ValueError, "aspiration and frication"):
+            prepare(data)
+
     def test_prepare_consumes_same_voice3_manifest_without_score_edits(self):
         from soundbench.scripts.render_chimera import prepare
         jobs = prepare(self.data)

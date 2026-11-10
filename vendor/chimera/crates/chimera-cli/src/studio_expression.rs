@@ -90,6 +90,12 @@ pub struct Input {
     pub expression: Vec<Expression>,
     #[serde(default)]
     pub midi_controls: Vec<MidiControl>,
+    /// Glottal aspiration noise, a multiple of the engine's.
+    #[serde(default = "one")]
+    pub aspiration: f64,
+    /// Supraglottal frication noise (constriction and teeth), a multiple of the engine's.
+    #[serde(default = "one")]
+    pub frication: f64,
 }
 
 impl Input {

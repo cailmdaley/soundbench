@@ -36,6 +36,10 @@ fn voice(
         // safety, so pressure changes loudness as well as timbre. level_db is the
         // part's constant level, as in voice3.
         v.output_gain *= 10f64.powf((STUDIO_GAIN_DB + input.level_db) / 20.0);
+        let noise = &mut v.airway.noise_gain;
+        noise.glottis *= input.aspiration;
+        noise.constriction *= input.frication;
+        noise.teeth *= input.frication;
     }
     let mut pitch = GestureScore::new();
     let (mut starts, mut ends) = (Vec::new(), Vec::new());
@@ -268,6 +272,19 @@ mod expression_tests {
         let far = input(s).mic_db(0.9);
         assert!(close > 5.0 && close < 7.0, "{close}");
         assert!(far < -2.0 && far > -4.0, "{far}");
+    }
+
+    #[test]
+    fn aspiration_and_frication_scale_the_engine_noise() {
+        let mut s = spec();
+        let (plain, _, _, _) = voice(&input(s.clone())).unwrap();
+        s["aspiration"] = json!(2.0);
+        s["frication"] = json!(5.0);
+        let (v, _, _, _) = voice(&input(s)).unwrap();
+        let (a, b) = (plain.airway.noise_gain, v.airway.noise_gain);
+        assert!((b.glottis / a.glottis - 2.0).abs() < 1e-12);
+        assert!((b.constriction / a.constriction - 5.0).abs() < 1e-12);
+        assert!((b.teeth / a.teeth - 5.0).abs() < 1e-12);
     }
 
     #[test]
