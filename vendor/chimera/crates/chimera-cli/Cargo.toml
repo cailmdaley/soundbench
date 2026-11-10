@@ -1,0 +1,16 @@
+[package]
+name = "chimera-cli"
+description = "CHIMERA command-line tools: offline renders to WAV, speech diagnostics, calibration"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "chimera"
+path = "src/main.rs"
+
+[dependencies]
+chimera = { path = "../chimera" }
+flate2 = "1"
+serde = "1"
+serde_json = "1"

@@ -1,0 +1,27 @@
+instrument = "ximbomba"
+
+[engine]
+sample_rate = 48000
+seed = 1729
+tail_seconds = 1.5
+output_gain = 1.30056
+
+[body]
+fundamental_hz = 52.09448543771973
+modes = 24
+cane_mass_ratio = 0.21639626048651298
+t60 = 0.766340201530087
+damping_exponent = 0.3850105553359495
+friction_static = 0.9
+friction_dynamic = 0.35
+stribeck_velocity = 0.08139739586809232
+hand_speed = 0.25643805390432206
+pressure = 1.9330573815696626
+release_s = 0.06
+roughness = 0.29620779653846474
+direction_asymmetry = 0.12
+turn_s = 0.09128300573628158
+ease = 0.43192981040693207
+pot_hz = 220.72277001983838
+pot_coupling = 7.229913361489967
+pot_q = 6.759998129438293

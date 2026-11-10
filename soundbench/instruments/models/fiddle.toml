@@ -1,0 +1,39 @@
+# Old-time house fiddle: the fitted violin body, darkened 1 dB/octave above 1 kHz.
+[engine]
+sample_rate = 48000
+seed = 1741
+tail_seconds = 2.0
+output_gain = 0.071458
+
+[strings]
+open_midi = [76, 69, 62, 55]
+max_semitones = 24
+impedance = [0.09, 0.12, 0.16, 0.20]
+decay_hz = [200, 1000, 3000, 8000, 20000]
+decay_t60 = [1.2, 0.9, 0.45, 0.16, 0.07]
+dispersion = -0.04
+coupling = 0.008
+release_seconds = 0.16
+
+[bow]
+force = 0.12
+speed = 0.12
+position = 0.12
+mu_static = 0.8
+mu_dynamic = 0.28
+stribeck_velocity = 0.02
+attack_seconds = 0.012
+change_seconds = 0.008
+roughness = 0.02
+roughness_hz = 3000
+pressure_wobble = 0.01
+speed_wobble = 0.02
+wobble_hz = [3, 30]
+
+[body]
+envelope_hz = [150, 168, 189, 212, 238, 267, 300, 336, 377, 423, 475, 533, 599, 672, 754, 846, 949, 1065, 1196, 1342, 1506, 1690, 1896, 2128, 2388, 2680, 3007, 3375, 3788, 4251, 4770, 5353, 6007, 6742, 7566, 8491, 9528, 10693, 12000]
+envelope_db = [-43.99, -38.00, -32.01, -26.01, -20.16, -14.68, -9.82, -5.92, -3.05, -1.27, -0.59, -0.69, -1.13, -1.42, -1.15, -0.41, 0.11, -0.14, -0.86, -1.24, -0.81, 0.29, 1.68, 2.92, 2.99, 1.92, 0.33, -0.68, -0.51, -0.91, -2.36, -3.85, -6.02, -8.06, -8.34, -8.14, -8.26, -8.49, -8.88]
+ripple_modes = 40
+ripple_gain = 0.7
+ripple_seed = 7
+tilt_db_per_octave = -1.0

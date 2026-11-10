@@ -1,0 +1,22 @@
+instrument = "tambori"
+
+[engine]
+sample_rate = 48000
+seed = 1729
+tail_seconds = 1.5
+output_gain = 0.35
+
+[body]
+fundamental_hz = 240.0
+bottom_ratio = 1.08
+air_hz = 110.0
+t60 = 0.22
+damping_exponent = 0.8
+max_hz = 2800.0
+stick_ms = 1.1
+snare_gain = 0.6
+snare_threshold = 0.002
+shell_hz = 1250.0
+shell_body_hz = 120.0
+shell_body_t60 = 0.14
+shell_volume = 0.8

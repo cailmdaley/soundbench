@@ -1,0 +1,414 @@
+{
+  "position": 0.12,
+  "speed": 0.12,
+  "notes": [
+    {
+      "pitch": 55,
+      "ratio": 8.601,
+      "cents": -13.35,
+      "corridor": [
+        7.375,
+        10.03
+      ]
+    },
+    {
+      "pitch": 56,
+      "ratio": 9.288,
+      "cents": -4.85,
+      "corridor": [
+        8.601,
+        10.03
+      ]
+    },
+    {
+      "pitch": 57,
+      "ratio": 7.965,
+      "cents": -2.3,
+      "corridor": [
+        7.375,
+        8.601
+      ]
+    },
+    {
+      "pitch": 58,
+      "ratio": 7.965,
+      "cents": -3.13,
+      "corridor": [
+        7.375,
+        8.601
+      ]
+    },
+    {
+      "pitch": 59,
+      "ratio": 7.965,
+      "cents": -9.75,
+      "corridor": [
+        6.325,
+        10.03
+      ]
+    },
+    {
+      "pitch": 60,
+      "ratio": 7.965,
+      "cents": -6.6,
+      "corridor": [
+        7.375,
+        8.601
+      ]
+    },
+    {
+      "pitch": 61,
+      "ratio": 8.601,
+      "cents": -5.35,
+      "corridor": [
+        7.375,
+        10.03
+      ]
+    },
+    {
+      "pitch": 62,
+      "ratio": 7.375,
+      "cents": -1.3,
+      "corridor": null
+    },
+    {
+      "pitch": 63,
+      "ratio": 7.965,
+      "cents": -2.03,
+      "corridor": [
+        7.375,
+        8.601
+      ]
+    },
+    {
+      "pitch": 64,
+      "ratio": 7.965,
+      "cents": -1.69,
+      "corridor": [
+        7.375,
+        8.601
+      ]
+    },
+    {
+      "pitch": 65,
+      "ratio": 7.375,
+      "cents": -1.05,
+      "corridor": null
+    },
+    {
+      "pitch": 66,
+      "ratio": 7.965,
+      "cents": -1.96,
+      "corridor": [
+        7.375,
+        8.601
+      ]
+    },
+    {
+      "pitch": 67,
+      "ratio": 7.375,
+      "cents": -1.12,
+      "corridor": [
+        7.375,
+        7.375
+      ]
+    },
+    {
+      "pitch": 68,
+      "ratio": 7.965,
+      "cents": -4.08,
+      "corridor": [
+        6.325,
+        10.03
+      ]
+    },
+    {
+      "pitch": 69,
+      "ratio": 6.325,
+      "cents": -1.11,
+      "corridor": [
+        6.325,
+        6.325
+      ]
+    },
+    {
+      "pitch": 70,
+      "ratio": 7.965,
+      "cents": -1.61,
+      "corridor": [
+        7.375,
+        8.601
+      ]
+    },
+    {
+      "pitch": 71,
+      "ratio": 7.375,
+      "cents": -1.77,
+      "corridor": [
+        6.325,
+        8.601
+      ]
+    },
+    {
+      "pitch": 72,
+      "ratio": 7.965,
+      "cents": -2.34,
+      "corridor": [
+        7.375,
+        8.601
+      ]
+    },
+    {
+      "pitch": 73,
+      "ratio": 7.375,
+      "cents": -2.99,
+      "corridor": [
+        5.423,
+        10.03
+      ]
+    },
+    {
+      "pitch": 74,
+      "ratio": 7.965,
+      "cents": -3.25,
+      "corridor": [
+        7.375,
+        8.601
+      ]
+    },
+    {
+      "pitch": 75,
+      "ratio": 8.601,
+      "cents": -4.08,
+      "corridor": [
+        7.375,
+        10.03
+      ]
+    },
+    {
+      "pitch": 76,
+      "ratio": 7.965,
+      "cents": -4.26,
+      "corridor": [
+        6.325,
+        10.03
+      ]
+    },
+    {
+      "pitch": 77,
+      "ratio": 8.601,
+      "cents": -5.02,
+      "corridor": [
+        7.375,
+        10.03
+      ]
+    },
+    {
+      "pitch": 78,
+      "ratio": 7.965,
+      "cents": -3.69,
+      "corridor": [
+        6.325,
+        10.03
+      ]
+    },
+    {
+      "pitch": 79,
+      "ratio": 7.965,
+      "cents": -3.95,
+      "corridor": [
+        6.325,
+        10.03
+      ]
+    },
+    {
+      "pitch": 80,
+      "ratio": 7.965,
+      "cents": -3.04,
+      "corridor": [
+        6.325,
+        10.03
+      ]
+    },
+    {
+      "pitch": 81,
+      "ratio": 7.375,
+      "cents": -1.96,
+      "corridor": [
+        6.325,
+        8.601
+      ]
+    },
+    {
+      "pitch": 82,
+      "ratio": 7.375,
+      "cents": -2.33,
+      "corridor": [
+        6.325,
+        8.601
+      ]
+    },
+    {
+      "pitch": 83,
+      "ratio": 6.83,
+      "cents": -1.07,
+      "corridor": [
+        5.423,
+        8.601
+      ]
+    },
+    {
+      "pitch": 84,
+      "ratio": 6.83,
+      "cents": -1.67,
+      "corridor": [
+        5.423,
+        8.601
+      ]
+    },
+    {
+      "pitch": 85,
+      "ratio": 6.83,
+      "cents": -2.6,
+      "corridor": [
+        4.651,
+        10.03
+      ]
+    },
+    {
+      "pitch": 86,
+      "ratio": 7.375,
+      "cents": -4.94,
+      "corridor": [
+        5.423,
+        10.03
+      ]
+    },
+    {
+      "pitch": 87,
+      "ratio": 6.325,
+      "cents": -1.9,
+      "corridor": [
+        4.651,
+        8.601
+      ]
+    },
+    {
+      "pitch": 88,
+      "ratio": 7.375,
+      "cents": -4.51,
+      "corridor": [
+        6.325,
+        8.601
+      ]
+    },
+    {
+      "pitch": 89,
+      "ratio": 7.965,
+      "cents": -5.44,
+      "corridor": [
+        6.325,
+        10.03
+      ]
+    },
+    {
+      "pitch": 90,
+      "ratio": 7.375,
+      "cents": -3.58,
+      "corridor": [
+        6.325,
+        8.601
+      ]
+    },
+    {
+      "pitch": 91,
+      "ratio": 6.325,
+      "cents": -3.18,
+      "corridor": [
+        4.651,
+        8.601
+      ]
+    },
+    {
+      "pitch": 92,
+      "ratio": 6.83,
+      "cents": -4.95,
+      "corridor": [
+        5.423,
+        8.601
+      ]
+    },
+    {
+      "pitch": 93,
+      "ratio": 7.965,
+      "cents": -8.58,
+      "corridor": [
+        6.325,
+        10.03
+      ]
+    },
+    {
+      "pitch": 94,
+      "ratio": 4.651,
+      "cents": 1.4,
+      "corridor": [
+        3.42,
+        6.325
+      ]
+    },
+    {
+      "pitch": 95,
+      "ratio": 7.965,
+      "cents": -8.86,
+      "corridor": [
+        6.325,
+        10.03
+      ]
+    },
+    {
+      "pitch": 96,
+      "ratio": 6.83,
+      "cents": -5.01,
+      "corridor": [
+        5.423,
+        8.601
+      ]
+    },
+    {
+      "pitch": 97,
+      "ratio": 5.022,
+      "cents": -0.55,
+      "corridor": [
+        3.42,
+        7.375
+      ]
+    },
+    {
+      "pitch": 98,
+      "ratio": 6.83,
+      "cents": -5.72,
+      "corridor": [
+        4.651,
+        10.03
+      ]
+    },
+    {
+      "pitch": 99,
+      "ratio": 5.423,
+      "cents": -4.78,
+      "corridor": [
+        2.933,
+        10.03
+      ]
+    },
+    {
+      "pitch": 100,
+      "ratio": 5.022,
+      "cents": -2.68,
+      "corridor": [
+        2.933,
+        8.601
+      ]
+    }
+  ]
+}

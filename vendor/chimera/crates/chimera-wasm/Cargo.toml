@@ -1,0 +1,15 @@
+[package]
+name = "chimera-wasm"
+description = "C-ABI wasm bindings of the CHIMERA engine for the browser (AudioWorklet and main thread)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+chimera = { path = "../chimera" }
+serde = "1"
+serde_json = { version = "1", features = ["float_roundtrip", "preserve_order"] }

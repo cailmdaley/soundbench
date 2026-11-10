@@ -1,0 +1,10 @@
+node_modules
+dist
+out
+*.wav
+.DS_Store
+target/
+src/wasm/chimera.wasm
+
+# duet shows (?show=<id>) are made locally and are never published: often covers of songs we have no rights to
+public/shows/

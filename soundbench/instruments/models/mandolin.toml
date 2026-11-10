@@ -1,0 +1,171 @@
+[engine]
+sample_rate = 48000
+seed = 817
+tail_seconds = 1.5
+output_gain = 47.315125896148054
+silence_threshold = 1e-18
+
+[strings]
+open_midi = [
+    76,
+    69,
+    62,
+    55,
+]
+max_fret = 20
+t60 = [
+    2.5,
+    2.8,
+    3.0,
+    3.5,
+]
+loss_mix = [
+    0.1,
+    0.1,
+    0.1,
+    0.15,
+]
+dispersion = [
+    -0.025,
+    -0.025,
+    -0.025,
+    -0.025,
+]
+decay_hz = [
+    80,
+    200,
+    500,
+    1000,
+    3000,
+    8000,
+    24000,
+]
+decay_t60 = [
+    [
+        1.8,
+        1.8,
+        1.5,
+        1.0,
+        0.45,
+        0.18,
+        0.08,
+    ],
+    [
+        1.8,
+        1.8,
+        1.5,
+        1.0,
+        0.45,
+        0.18,
+        0.08,
+    ],
+    [
+        1.8,
+        1.8,
+        1.5,
+        1.0,
+        0.45,
+        0.18,
+        0.08,
+    ],
+    [
+        1.8,
+        1.8,
+        1.5,
+        1.0,
+        0.45,
+        0.18,
+        0.08,
+    ],
+]
+polarization_mix = [
+    0.46,
+    0.46,
+    0.46,
+    0.46,
+]
+polarization_rate = [
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+]
+polarization_cents = [
+    3.0,
+    2.5,
+    2.0,
+    1.5,
+]
+choke_seconds = 0.035
+pitch_smoothing_ms = 3.0
+release_hz = [
+    80,
+    200,
+    500,
+    1200,
+]
+release_t60 = [
+    0.3,
+    0.25,
+    0.18,
+    0.12,
+]
+release_residual_multiplier = 1.5
+inharmonicity = [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+]
+damping_glide_ms = 1.0
+refret_ms = 25.0
+refret_t60 = 0.04
+
+[excitation]
+position = 0.16
+jitter = 0.025
+pick_ms = 1.0
+lowpass_hz = 10000.0
+velocity_exponent = 1.4
+velocity_corner_exponent = 0.4
+slide_noise = 0.002
+course_delay_ms = 2.4
+course_position_spread = 0.012
+contact_ms = 1.5
+restrike_keep = 0.5
+
+[body]
+frequency_hz = [
+    178.5,
+    323.0,
+    484.5,
+    722.5,
+    1062.5,
+    1572.5,
+    2380.0,
+    3485.0,
+]
+t60_seconds = [
+    0.08,
+    0.065,
+    0.055,
+    0.045,
+    0.035,
+    0.025,
+    0.02,
+    0.015,
+]
+weights = [
+    0.5,
+    1.0,
+    0.35,
+    0.9,
+    0.175,
+    0.125,
+    0.36,
+    0.0,
+]
+
+[bridge]
+coupling = 0.0005
+direct = 0.5

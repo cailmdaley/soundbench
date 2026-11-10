@@ -1,0 +1,26 @@
+# Recording-class fit; not a measured Mallorcan instrument.
+pressure_pitch_cents = 180.0
+breath_noise = 0.009
+chiff_noise = 0.035
+squawk_noise = 0.0
+sample_rate = 48000
+seed = 1729
+output_gain = 0.37
+lowpass_hz = 2805.3793904836375
+noise = 0.050992485795039774
+loss_pole = 0.65
+jet_ratio = 0.32
+pressure = 1.0035289086694525
+attack_s = 0.018
+release_s = 0.1
+tail_seconds = 1.2
+vibrato_cents = 18.0
+vibrato_hz = 5.4
+wobble_cents = 0.0
+drone_gain = 0.0
+drone_pitch = 48
+squawk_cents = 0.0
+sag_cents = 0.0
+tuning_cents = [0.0, 0.0, 3.91, 0.0, -13.69, -1.96, 0.0, 1.96, 0.0, -15.64, 0.0, -11.73]
+delay_scale = 1.0
+bore_correction = [19.67915827032299, 0.027841511518515546]

@@ -1,0 +1,82 @@
+{
+  "feature_loss_before": 3.939482828237248,
+  "feature_loss_after": 0.24601127100554857,
+  "relative_reduction": 0.937552394125899,
+  "objective": "mean squared log harmonic amplitudes plus 3x log broadband decay residuals",
+  "function_evaluations": 25,
+  "optimizer_success": true,
+  "parameters": [
+    20.308358457222344,
+    -0.23973870999746985,
+    17.936262088588638,
+    1.0301874988845116e-14,
+    0.001041301920839659,
+    0.4310433778814462,
+    0.39474182511480904
+  ],
+  "fixed_assumed_velocity": 96,
+  "notes": [
+    {
+      "file": "g1",
+      "midi_measured_octave": 43,
+      "hz": 98.11090145544796,
+      "reference_t60_s": 17.348808239519435,
+      "reference_centroid_hz": 215.2814725676406,
+      "before": {
+        "feature_loss": 4.777368379722246,
+        "t60_s": 8.886807633248333,
+        "centroid_hz": 318.40310003610455,
+        "loudness": {
+          "reference_lufs": -14.2,
+          "model_lufs_before": -21.5,
+          "model_lufs_after": -14.2,
+          "static_gain": 2.3173946499684788,
+          "preview_common_gain": 1
+        }
+      },
+      "after": {
+        "feature_loss": 0.2618813290052272,
+        "t60_s": 16.477254828530487,
+        "centroid_hz": 118.27343783692808,
+        "loudness": {
+          "reference_lufs": -14.2,
+          "model_lufs_before": -27.3,
+          "model_lufs_after": -14.2,
+          "static_gain": 4.518559443749224,
+          "preview_common_gain": 1
+        }
+      }
+    },
+    {
+      "file": "g2",
+      "midi_measured_octave": 55,
+      "hz": 196.15589306836748,
+      "reference_t60_s": 18.590353877487363,
+      "reference_centroid_hz": 272.2332653667604,
+      "before": {
+        "feature_loss": 2.534457003646211,
+        "t60_s": 10.192535676514874,
+        "centroid_hz": 452.7465155803313,
+        "loudness": {
+          "reference_lufs": -13.0,
+          "model_lufs_before": -21.4,
+          "model_lufs_after": -13.0,
+          "static_gain": 2.6302679918953813,
+          "preview_common_gain": 1
+        }
+      },
+      "after": {
+        "feature_loss": 0.2828813844211887,
+        "t60_s": 19.559136807327466,
+        "centroid_hz": 227.66903079463322,
+        "loudness": {
+          "reference_lufs": -13.0,
+          "model_lufs_before": -26.5,
+          "model_lufs_after": -13.0,
+          "static_gain": 4.731512589614805,
+          "preview_common_gain": 1
+        }
+      }
+    }
+  ]
+}

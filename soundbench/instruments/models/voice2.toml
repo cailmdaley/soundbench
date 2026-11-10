@@ -1,0 +1,33 @@
+# Overrides of voice.toml; inherited tract, walls and Story shapes are documented there.
+# All coefficients below are chosen, not fitted measurements, unless cited.
+[voice2]
+length_cm = 17.5 # cm; chosen tenor length, 24 sections at 48 kHz.
+register_hz = [330.0, 520.0] # Hz; chosen chest/head passaggio limits.
+nasal_scale = 1.0 # ratio; chosen relative to v1's constructed nasal geometry.
+output_gain = 0.06 # linear output scale; chosen headroom for velocity-127 swells and cries.
+inhalation_db = -43.0 # dB source amplitude re excitation; chosen for held-hum phrase gaps.
+hum_air_hz = 1100.0 # Hz; chosen glottal aspiration colour for nasal phonation.
+hum_soft_air = 3.0 # excitation ratio increment; chosen soft-nasal aspiration coupling.
+nasal_wall_hz = 7500.0 # Hz; chosen per-section nasal wall relaxation pole, not output EQ.
+closure_hz = 1000.0 # Hz; chosen effort-dependent glottal closure sharpening corner.
+nasal_loss = 0.965 # per-section amplitude ratio; chosen damping, inside nasal tube.
+nostril_radiation_hz = 1200.0 # Hz; chosen frequency-dependent nostril load.
+velum_cm2 = 1.0 # cm^2; chosen held-nasal opening, DESIGN approximation.
+sinus_hz = 500.0 # Hz; chosen Helmholtz antiresonance within DESIGN 400–600 Hz.
+sinus_area = 0.8 # cm^2 admittance scale; chosen sinus coupling (peak = scale times Q).
+sinus_q = 2.0 # dimensionless; chosen sinus damping.
+rd_soft = 2.3 # dimensionless; chosen breathy end of Fant (1995) Rd axis.
+rd_loud = 0.35 # dimensionless; chosen pressed end of Fant (1995) Rd axis.
+head_rd = 0.8 # dimensionless Rd increment; chosen per DESIGN.
+aspiration = 0.12 # excitation ratio; chosen flow-pulsed aspiration strength.
+leak = 0.025 # excitation ratio; chosen steady posterior-chink aspiration.
+jitter = 0.004 # fractional period SD; chosen near v1.
+shimmer = 0.02 # fractional amplitude SD; chosen below v1 because aspiration adds measured shimmer.
+cry_lift_db = 3.0 # dB; a cry in a hummed phrase sits this far above the hum, after radiation balance (Bordó DESIGN: at most 3 dB).
+flutter_cents = 5.0 # cents RMS; chosen Klatt-style incommensurate flutter.
+vibrato = 0.8 # dimensionless extent scale; chosen default.
+breathiness = 1.0 # dimensionless aspiration scale; chosen default.
+tension = 0.0 # Rd subtraction; chosen default.
+seed = 1961 # integer random seed; chosen night identity.
+release_s = 0.22 # s; chosen phonation release.
+tail_seconds = 1.0 # s; chosen render tail.

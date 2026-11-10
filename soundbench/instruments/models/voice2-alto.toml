@@ -1,0 +1,6 @@
+# Alto overrides; all other voice2 coefficients inherit voice2.toml.
+[voice2]
+nasal_wall_hz = 7500.0 # Hz; chosen per-section wall relaxation for shorter nasal branch.
+length_cm = 15.3 # cm; chosen alto length, 21 sections at 48 kHz.
+register_hz = [440.0, 700.0] # Hz; chosen higher chest/head passaggio.
+nasal_scale = 0.8742857142857143 # ratio; chosen 15.3/17.5 geometric scaling.

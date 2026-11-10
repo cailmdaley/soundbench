@@ -1,0 +1,29 @@
+# The strumming hand: how a pick or fingers cross the strings.
+# Read by models.guitar.strum.
+
+# Time for a downstroke to cross all six strings at velocity 90 and 100 bpm.
+# Two real strumming loops (Freesound, CC0), through the calibrated rise-time estimator and
+# scaled to 100 bpm, measure 25 ms (628766, 155 bpm) and 57 ms (610011,
+# 128 bpm); single showcase chords take 75-90 ms, a slow stroke to author with
+# speed_ms. A stroke over fewer strings takes proportionally less, since the
+# hand's speed is what the player sets.
+six_string_ms = 30.0
+# Upstrokes are quicker flicks of the wrist.
+up_factor = 0.8
+# Louder and faster music both shorten the stroke: ms * (90/v)**a * (100/bpm)**b.
+velocity_exponent = 0.5
+tempo_exponent = 0.5
+# Stroke-to-stroke spread variation (log-normal sigma) and per-gap variation.
+spread_sigma = 0.15
+gap_sigma = 0.25
+# A heavier string holds the pick longer: the gap after leaving string k grows
+# by resistance * (k-1)/5, so a downstroke lingers in the bass.
+resistance = 0.6
+# Force on the last string struck relative to the first, and its per-string
+# variation (log-normal sigma).
+last_first_force = 0.8
+force_sigma = 0.06
+# An upstroke reaches the top three or four strings unless told otherwise.
+up_reach = [3, 4]
+# A muted stroke (chuck) is choked this long after each string sounds.
+mute_ms = 18.0

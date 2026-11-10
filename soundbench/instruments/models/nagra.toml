@@ -1,0 +1,74 @@
+# The Nagra: one room microphone and a quarter-inch mono tape machine
+# (scripts/models/nagra.py). A piece's [tape] table may override any value per roll.
+
+speed_cents = 0.0          # this machine's constant speed offset
+
+[mic]
+reference_m = 1.0          # direct level and HF corner are given at this distance
+default_distance_m = 2.0   # a player the roll doesn't place
+direct_exponent = 1.0      # inverse-distance law
+hf_corner_hz = 15000       # one-pole corner at the reference distance
+hf_exponent = 0.7          # corner falls as distance ** -0.7 (off-axis, air, furnishings)
+speed_of_sound = 343.0
+highpass_hz = 60           # a film boom mic's low cut
+
+[room]
+ir = "genesis6"
+ir_skip_ms = 4             # drop the IR's direct peak and earliest reflections
+wet_db = -9.0              # reverberant field vs direct sound at the reference distance (critical distance ~2.8 m)
+tone_dbfs = -46            # bounded ambient-bed prior; measured pauses include speech, not pure noise
+tone_hz = 250
+
+[tape]
+operating_level_dbfs = -20 # where the music sits on tape
+emphasis_hz = 3000
+emphasis_db = 3            # mild coloration prior; transfer function is unidentified
+drive = 0.8                # conservative saturation prior; THD is unmeasured
+asymmetry = 0.02           # even-harmonic colour prior, not measured bias
+head_bump_hz = 80
+head_bump_db = 1.0         # bounded 0–2 dB prior; no isolated head bump
+head_bump_q = 0.9
+lowpass_hz = 13500         # bounded HF prior (9–18 kHz); measured 13.4-kHz proxy is not a -3 dB corner
+hiss_dbfs = -72            # set below the measured pause floor by ear; music at -20 dBFS
+hiss_highpass_hz = 400
+hiss_lowpass_hz = 12000
+
+[wow]
+hz = 0.9
+cents = 1.5                # peak deviation prior; no usable tape-only measurement
+wander = 0.4               # rate and depth wander by about ±40%
+wander_hz = 0.15
+
+[flutter]
+hz = 8.5
+cents = 0.7                # flutter depth prior, not measured
+wander = 0.4
+wander_hz = 0.6
+
+[transport]
+stop_s = 0.18              # a roll ends: the machine winds down
+stop_speed = 0.55
+stop_fade_s = 0.06
+start_s = 0.22             # the next roll comes up to speed
+start_speed = 0.75
+
+# Effective room targets weakly anchored by dialogue releases; geometry/mix are priors.
+[preset.stage.room]
+rt60_s = 1.1               # dialogue-release proxy; plausible range 0.6–1.8 s
+wet_db = -9.0
+tone_dbfs = -46
+
+[preset.basement.mic]
+default_distance_m = 1.5   # geometry prior
+[preset.basement.room]
+rt60_s = 0.5               # discussion/tuning proxies; plausible range 0.3–0.9 s
+wet_db = -12.0
+tone_dbfs = -48
+[preset.basement.tape]
+hiss_dbfs = -76            # set below the measured pause floor by ear
+
+[transfer]
+delay_ms = 19.584          # fitted downstream delay, not tape transport
+lowpass_hz = 1200          # fitted parameter ~1162–1258 Hz
+poles = 1.5                # fitted effective order ~1.47–1.61
+side_mid_db = -4.7         # measured L−R/L+R energy ratio; normalize per render

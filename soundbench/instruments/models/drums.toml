@@ -1,0 +1,68 @@
+instrument = "drums"
+
+[engine]
+sample_rate = 48000
+seed = 1974
+tail_seconds = 5.0
+output_gain = 0.32
+
+[kick]
+fundamental_hz = 53.0
+bottom_ratio = 1.13
+air_hz = 31.0
+t60 = 0.30
+damping_exponent = 0.8
+max_hz = 1800.0
+stick_ms = 2.8
+hardness = 0.35
+felt = 0.75
+port = 0.65
+shell_hz = 430.0
+shell_body_hz = 80.0
+shell_body_t60 = 0.16
+shell_volume = 0.65
+gain = 1.6
+
+[snare]
+fundamental_hz = 175.0
+bottom_ratio = 1.6
+air_hz = 100.0
+t60 = 0.38
+damping_exponent = 0.45
+max_hz = 5200.0
+stick_ms = 0.6
+snare_gain = 3.0
+snare_threshold = 0.0006
+wire_t60 = 0.045
+shell_hz = 1650.0
+shell_body_hz = 135.0
+shell_body_t60 = 0.12
+shell_volume = 0.35
+gain = 0.8
+brush_gain = 0.035
+
+[toms]
+low_hz = 105.0
+high_hz = 145.0
+t60 = 0.65
+gain = 1.0
+
+[cymbals]
+modes = 72
+hat_low_hz = 630.0
+ride_low_hz = 310.0
+crash_low_hz = 390.0
+hat_t60 = 0.95
+ride_t60 = 3.8
+crash_t60 = 3.2
+closed_t60 = 0.075
+coupling = 0.025
+tilt = 0.15
+gain = 1.8
+hat_gain = 4.0
+
+[mics]
+overhead_gain = 0.30
+bleed_gain = 0.07
+overhead_ms = 3.5
+width = 0.8

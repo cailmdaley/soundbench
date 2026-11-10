@@ -1,0 +1,39 @@
+[engine]
+sample_rate = 48000
+output_gain = 0.72
+tail_seconds = 2.0
+seed = 1729
+
+[hammer]
+mass_kg = 0.004
+stiffness = 100000000.0
+exponent = 2.3
+hysteresis = 0.2
+velocity_exponent = 1.45
+attack_s = 0.0015
+
+[tine]
+t60_s = 8.0
+decay_register = 0.30
+upper_loss = 4.5
+beat_cents = 1.7
+tonebar_gain = 0.16
+bell_gain = 0.10
+
+[pickup]
+gap = 0.65
+offset = 0.35
+excursion = 0.85
+
+[damper]
+release_s = 0.055
+thump_gain = 0.012
+
+[effect]
+mode = "off"
+depth = 0.5
+rate_hz = 4.5
+
+[amp]
+drive = 1.7
+lowpass_hz = 6500.0

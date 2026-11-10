@@ -1,0 +1,31 @@
+# Direct force-driven alternative.
+[engine]
+sample_rate = 48000
+commuted_excitation = false
+output_gain = 0.263086
+tail_seconds = 4.0
+max_note_seconds = 18.0
+seed = 1729
+modal_data = "piano-modal.json"
+release_data = "piano-release.json"
+
+[hammer]
+mass_kg = 0.008
+stiffness = 1000000000.0
+exponent = 2.5
+hysteresis = 0.18
+
+[strings]
+detune_cents = 1.2
+
+[damper]
+release_s = 0.22
+half_pedal_exponent = 2.0
+undamped_from = 90
+
+[resonance]
+gain = 0.012
+
+[soft_pedal]
+gain = 0.75
+brightness = 0.65

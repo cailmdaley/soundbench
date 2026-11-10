@@ -1,0 +1,308 @@
+# TR-808 circuit model. Knobs are the panel's 0..10 divided by 10; the rest are circuit values.
+machine = "tr808"
+
+[engine]
+sample_rate = 48000
+seed = 808
+unit = "studio-a"        # seeds this box's component tolerances
+output_gain = 0.5
+tail_seconds = 3.0
+velocity = "continuous"  # "continuous": velocity is trigger voltage; "accent": two levels, split at 100
+accent = 0.6             # the global ACCENT knob
+accent_coupling = 0.15   # hits on one step pull toward the step's strongest trigger
+accent_sag = 0.04        # each extra accented voice on a step loads the accent bus
+toms = "toms"            # or "congas": the panel switch for keys 41/43/45
+choke_ms = 2.5           # a closed hat discharges a ringing open hat's VCA
+
+[unit]                   # tolerance spreads, one standard deviation; draws clip at two
+freq = 0.01
+decay = 0.025
+squares = 0.0025
+level_db = 0.5
+
+[metal]                  # six free-running Schmitt oscillators
+hz = [205.3, 304.4, 369.6, 522.7, 540.0, 800.0]
+duty = 0.5
+
+[voices.bd]
+level = 0.8
+pan = 0.0
+gain = 0.45
+tune = 0.5               # internal trim between hz_lo and hz_hi
+hz_lo = 44.0
+hz_hi = 56.0
+decay = 0.6
+t60_lo = 0.15
+t60_hi = 1.6
+decay_s = 0.0            # >0 overrides the decay knob with a T60 in seconds
+long_t60 = 2.2           # key 35: the long, note-off-gated boom
+sweep_semitones = 6.7  # the pulse-loading blip at normal trigger level
+sweep_ms = 74.0  # ~3 time constants of the blip
+blip_accent = 1.2        # blip grows with trigger level
+drive = 0.8
+asymmetry = 0.25
+click = 0.6
+tone = 1.0  # click low-pass, 200 Hz .. 5 kHz
+pulse_ms = 1.0
+snap_semitones = 24.0
+snap_ms = 3.0
+
+[voices.bass]
+level = 0.8
+pan = 0.0
+gain = 2.0
+decay_s = 1.4
+sweep_semitones = 6.7
+sweep_ms = 74.0
+blip_accent = 1.2
+drive = 0.3
+asymmetry = 0.25
+click = 0.1
+tone = 0.3
+pulse_ms = 1.0
+glide_ms = 60.0
+retrigger = false
+snap_semitones = 0.0
+snap_ms = 3.0
+
+[voices.sd]
+level = 0.7
+pan = 0.0
+gain = 0.6
+lo_hz = 170.0
+lo_t60 = 0.18
+hi_hz = 330.0
+hi_t60 = 0.12
+tone = 0.5
+snappy = 0.6
+decay_s = 0.0
+noise_t60 = 0.18
+noise_hp = 1800.0
+noise_lp = 9000.0
+noise_gain = 0.5
+noise_accent = 1.5
+pulse_ms = 0.5
+blip_ms = 3.0
+
+[voices.cp]
+level = 0.7
+pan = -0.1
+gain = 0.9
+bp_hz = 1150.0
+bp_q = 1.6
+hp_hz = 3500.0
+air = 0.04
+bursts = 4.0
+spread_ms = 10.0
+jitter_ms = 1.0
+burst_ms = 4.5
+tail = 0.22
+tail_s = 0.45
+air_lp = 9000.0
+
+[voices.rs]
+level = 0.6
+pan = 0.05
+gain = 1.0
+lo_hz = 470.0
+lo_t60 = 0.03
+hi_hz = 1780.0
+hi_t60 = 0.025
+hi_mix = 0.5
+hp_hz = 300.0
+pulse_ms = 0.15
+blip_ms = 1.0
+click = 4.0
+click_hz = 12000.0
+click_hp = 2500.0
+
+[voices.cl]
+level = 0.5
+pan = 0.15
+gain = 0.6
+hz = 2500.0
+t60 = 0.05
+pulse_ms = 0.1
+blip_ms = 1.0
+click = 4.0
+click_hz = 12000.0
+click_hp = 3000.0
+
+[voices.ma]
+level = 0.4
+pan = 0.25
+gain = 1.0
+hp_hz = 5000.0
+t60 = 0.032
+attack_ms = 3.0
+tone = 0.75
+
+[voices.ch]
+level = 0.5
+pan = 0.2
+gain = 8.0
+t60_lo = 0.06
+t60_hi = 0.2
+decay = 0.5
+bp_hz = 10000.0
+bp_q = 1.2
+hp_hz = 7500.0
+attack_ms = 0.3
+tone = 0.75              # 1 is the circuit's top end; lower closes a dark-ing low-pass
+drive = 1.5
+decay_s = 0.0
+
+[voices.oh]
+level = 0.5
+pan = 0.2
+gain = 5.0
+t60_lo = 0.25
+t60_hi = 1.6
+decay = 0.4
+bp_hz = 8000.0
+bp_q = 1.2
+hp_hz = 6500.0
+attack_ms = 0.3
+tone = 0.75
+drive = 1.5
+decay_s = 0.0
+
+[voices.cy]
+level = 0.45
+pan = 0.3
+gain = 4.0
+t60_lo = 0.4
+t60_hi = 2.5
+decay = 0.6
+low_hz = 3440.0
+mid_hz = 7100.0
+high_hz = 8000.0
+band_q = 1.5
+low_t60 = 0.25
+mid_ratio = 0.45
+mid = 0.6
+tone = 0.5
+top = 0.75
+attack_ms = 0.3
+post_hp = 1000.0
+drive = 1.0
+
+[voices.cb]
+level = 0.5
+pan = -0.15
+gain = 1.0
+bp_hz = 850.0
+bp_q = 2.0
+lp_hz = 10000.0
+fast_t60 = 0.08
+tail_t60 = 0.9
+tail = 0.25
+drive = 0.3
+
+[voices.lt]
+level = 0.6
+pan = -0.25
+gain = 0.8
+hz = 90.0
+hz_abs = 0.0             # >0 tunes the tom to an exact frequency
+tune = 0.5
+tune_range = 12.0
+t60 = 0.3
+decay = 0.5
+blip = 0.25
+blip_ms = 6.0
+pulse_ms = 1.0
+noise = 0.3
+noise_t60 = 0.08
+click = 0.0
+click_hz = 4000.0
+
+[voices.mt]
+level = 0.6
+pan = 0.0
+gain = 0.8
+hz = 135.0
+hz_abs = 0.0
+tune = 0.5
+tune_range = 12.0
+t60 = 0.28
+decay = 0.5
+blip = 0.25
+blip_ms = 6.0
+pulse_ms = 1.0
+noise = 0.3
+noise_t60 = 0.08
+click = 0.0
+click_hz = 4000.0
+
+[voices.ht]
+level = 0.6
+pan = 0.25
+gain = 0.8
+hz = 185.0
+hz_abs = 0.0
+tune = 0.5
+tune_range = 12.0
+t60 = 0.25
+decay = 0.5
+blip = 0.25
+blip_ms = 6.0
+pulse_ms = 1.0
+noise = 0.3
+noise_t60 = 0.08
+click = 0.0
+click_hz = 4000.0
+
+[voices.lc]
+level = 0.55
+pan = -0.2
+gain = 0.6
+hz = 250.0
+hz_abs = 0.0
+tune = 0.5
+tune_range = 12.0
+t60 = 0.35
+decay = 0.5
+blip = 0.12
+blip_ms = 4.0
+pulse_ms = 0.7
+noise = 0.0
+noise_t60 = 0.05
+click = 0.0
+click_hz = 4000.0
+
+[voices.mc]
+level = 0.55
+pan = 0.0
+gain = 0.6
+hz = 305.0
+hz_abs = 0.0
+tune = 0.5
+tune_range = 12.0
+t60 = 0.35
+decay = 0.5
+blip = 0.12
+blip_ms = 4.0
+pulse_ms = 0.7
+noise = 0.0
+noise_t60 = 0.05
+click = 0.0
+click_hz = 4000.0
+
+[voices.hc]
+level = 0.55
+pan = 0.2
+gain = 0.6
+hz = 398.0
+hz_abs = 0.0
+tune = 0.5
+tune_range = 12.0
+t60 = 0.35
+decay = 0.5
+blip = 0.12
+blip_ms = 4.0
+pulse_ms = 0.7
+noise = 0.0
+noise_t60 = 0.05
+click = 0.0
+click_hz = 4000.0
