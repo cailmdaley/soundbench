@@ -9,10 +9,13 @@ The same library carries the ears an agent uses in place of listening: spectrogr
 
 ```mermaid
 flowchart LR
-    N["notes or MIDI"] --> I["physical instrument"] --> A["audio"]
-    A --> E["ears: spectrum, loudness, pitch, timbre"]
+    N["notes or MIDI"] --> I
+    subgraph I["instrument"]
+        M["physical model"] --- P["preset"]
+    end
+    I --> A["audio"] --> E["ears: spectrum, loudness, pitch, timbre"]
     R["a recording"] --> E
-    E -- fit --> P["preset"] --> I
+    E -- fit --> P
 ```
 
 ## Make sound
