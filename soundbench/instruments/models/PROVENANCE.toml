@@ -1,5 +1,5 @@
 schema = 1
-notice = "Parameters are MIT-licensed with the rest of the library (see LICENSE and RIGHTS.md). Each set credits the openly licensed recordings and publications it draws on; no sample audio is included."
+notice = "Parameters are MIT-licensed with the rest of the library (see LICENSE). Each set credits the openly licensed recordings and publications it draws on; no sample audio is included."
 
 [[sets]]
 name = "Banjo"

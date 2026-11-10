@@ -75,8 +75,22 @@ Tests render diagnostic notes and can take several minutes.
 The runner isolates test files so JIT caches don't accumulate across instruments.
 Private-studio delivery checks don't belong to this library; any retained check needing a private recording skips with its reason.
 
-## Licence
+## Licence and credits
 
 MIT, copyright Cail Daley; see [LICENSE](LICENSE).
 Soundbench was written by Claude with Cail Daley.
-[RIGHTS.md](RIGHTS.md) credits the recordings and vendored code the library draws on.
+
+The library ships code and numerical parameters, and no recorded audio.
+A fitted parameter file is a preset: one setting of a physical model, reached from some recordings.
+Some defaults were set against reference recordings that are not distributed or listed.
+The openly licensed sources that parameters draw on, with links, are in [`PROVENANCE.toml`](soundbench/instruments/models/PROVENANCE.toml):
+
+- Salamander Grand Piano V3, Alexander Holm, CC BY 3.0.
+- Freesound and Wikimedia Commons recordings by harri (guitar), MrAuralization (tonewheel organ), tim.kahn (Rhodes Mark II) and SGaola (Galician bagpipes), CC BY 4.0.
+- MuldjordKit 3, Lars Muldjord / DrumGizmo.org, CC BY 4.0.
+- VocalSet, Wilkins, Seetharaman, Wahl and Pardo, CC BY 4.0.
+- Asurnipal, *Friction drum in action*, CC BY-SA 4.0 (`ximbomba-austria.toml` is fitted to it and is also offered under CC BY-SA 4.0), and Poniol60, *Zambomba*, CC BY-SA 3.0.
+- Philharmonia Orchestra sound samples and the University of Iowa MIS, under their own terms.
+- Vocal-tract areas from Story (2008), JASA 123(1):327–335.
+
+CHIMERA (`vendor/chimera`), by Jameson Hodge and contributors, is MIT and keeps its own `LICENSE`; the `chimera-studio` binary and studio expression are this library's additions to the fork.

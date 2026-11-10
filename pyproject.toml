@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Playable physical instruments and tools for measuring and fitting sound"
 requires-python = ">=3.12,<3.14"
 license = "MIT"
-license-files = ["LICENSE", "RIGHTS.md"]
+license-files = ["LICENSE"]
 authors = [{ name = "Cail Daley" }]
 dependencies = [
   "mido>=1.3,<2", "numpy>=2", "numba>=0.61", "scipy>=1.14", "soundfile>=0.13",

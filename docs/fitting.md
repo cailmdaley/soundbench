@@ -53,4 +53,4 @@ Piano calibration utilities are under `soundbench.scripts.models.piano_fit` and 
 Record a source's creator, licence, URL, checksum, analysis windows and any assumed fingering.
 Keep those with every exported parameter set.
 Source audio, aligned crops and figures derived from it are local outputs, not automatically redistributable artifacts.
-See `RIGHTS.md` and the adjacent parameter provenance records before publishing a fit.
+See the adjacent parameter provenance records before publishing a fit.
