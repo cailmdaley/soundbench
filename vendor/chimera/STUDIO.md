@@ -20,6 +20,8 @@ The expressive render maps the performance into the physical engine:
 
 `render_chimera.py --baseline` renders the frozen steady-source diagnostic instead: pressure 9 cmH₂O, tension .55, breathiness .15, held-note vibrato 35 cents, drift and roughness off, no character or dynamics.
 
+Upstream's own path, `chimera render notes melody.json out [male|female]`, also reads an optional `"brightness"` in the melody: the source's Bright control (0 dark to 1 bright, default .25), which sharpens the folds' closure and adds harmonics without adding noise. Absent, the render is upstream's.
+
 Run adapter tests with `uv run python -m unittest tests.test_chimera` from the Soundbench root.
 Run the native planner and expression tests with `cargo test --locked -p chimera-cli --bin chimera-studio` from this folder.
 
