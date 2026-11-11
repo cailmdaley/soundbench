@@ -525,6 +525,7 @@ pub fn notes(ctx: &Ctx, a: &[String]) -> Result<(), String> {
         voiced: Some(true),
         pressure: Some(9.0),
         tension: Some(0.55),
+        brightness: j["brightness"].as_f64(),
         ..Default::default()
     });
     let (mut t, mut k, mut end) = (t0, 0usize, 0.0f64);
